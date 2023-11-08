@@ -1,6 +1,6 @@
 package com.cozybinarybase.accountstopthestore.model.member.domain;
 
-import com.cozybinarybase.accountstopthestore.model.member.dto.MemberSignUpRequestDto;
+import com.cozybinarybase.accountstopthestore.model.member.dto.EmailSignUpRequestDto;
 import com.cozybinarybase.accountstopthestore.model.member.dto.constants.AuthType;
 import com.cozybinarybase.accountstopthestore.model.member.dto.constants.Authority;
 import com.cozybinarybase.accountstopthestore.model.member.persist.entity.MemberEntity;
@@ -47,7 +47,7 @@ public class Member implements UserDetails {
 
   private LocalDateTime withdrawalAt;
 
-  public static Member fromSignUpDto(MemberSignUpRequestDto memberSignUpRequest) {
+  public static Member fromSignUpDto(EmailSignUpRequestDto memberSignUpRequest) {
     return Member.builder()
         .authType(AuthType.EMAIL)
         .email(memberSignUpRequest.getEmail())

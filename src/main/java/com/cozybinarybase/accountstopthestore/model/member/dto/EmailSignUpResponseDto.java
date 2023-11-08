@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MemberResponseDto {
+public class EmailSignUpResponseDto {
 
   private AuthType authType;
 
@@ -19,8 +19,8 @@ public class MemberResponseDto {
 
   private String email;
 
-  public static MemberResponseDto fromEntity(MemberEntity memberEntity) {
-    return MemberResponseDto.builder()
+  public static EmailSignUpResponseDto fromEntity(MemberEntity memberEntity) {
+    return EmailSignUpResponseDto.builder()
         .authType(memberEntity.getAuthType())
         .name(memberEntity.getName())
         .email(memberEntity.getEmail())

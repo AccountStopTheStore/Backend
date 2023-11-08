@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class MemberSignInRequestDto {
+public class EmailSignInRequestDto {
 
   @Email(message = "이메일 형식이 아닙니다.")
   private String email;

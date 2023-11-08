@@ -2,14 +2,14 @@ package com.cozybinarybase.accountstopthestore.model.member.service;
 
 import com.cozybinarybase.accountstopthestore.common.handler.exception.MemberNotValidException;
 import com.cozybinarybase.accountstopthestore.model.member.domain.Member;
-import com.cozybinarybase.accountstopthestore.model.member.dto.MemberResponseDto;
-import com.cozybinarybase.accountstopthestore.model.member.dto.MemberSignInRequestDto;
-import com.cozybinarybase.accountstopthestore.model.member.dto.MemberSignUpRequestDto;
+import com.cozybinarybase.accountstopthestore.model.member.dto.EmailSignInResponseDto;
+import com.cozybinarybase.accountstopthestore.model.member.dto.EmailSignUpResponseDto;
+import com.cozybinarybase.accountstopthestore.model.member.dto.EmailSignInRequestDto;
+import com.cozybinarybase.accountstopthestore.model.member.dto.EmailSignUpRequestDto;
 import com.cozybinarybase.accountstopthestore.model.member.persist.entity.MemberEntity;
 import com.cozybinarybase.accountstopthestore.model.member.persist.repository.MemberRepository;
 import com.cozybinarybase.accountstopthestore.security.TokenProvider;
 import java.util.Objects;
-import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,8 +17,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Service
 @Transactional
@@ -42,7 +40,7 @@ public class MemberService implements UserDetailsService {
         .orElseThrow(() -> new UsernameNotFoundException("가입된 이메일이 아닙니다. -> " + email));
   }
 
-  public MemberResponseDto signUp(MemberSignUpRequestDto memberSignUpRequest) {
+  public EmailSignUpResponseDto signUpWithEmail(EmailSignUpRequestDto memberSignUpRequest) {
 
     this.memberRepository.findByEmail(memberSignUpRequest.getEmail()).ifPresent(member -> {
       throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
@@ -52,20 +50,22 @@ public class MemberService implements UserDetailsService {
     member.passwordEncode(this.passwordEncoder);
     MemberEntity memberEntity = this.memberRepository.save(member.toEntity());
 
-    return MemberResponseDto.fromEntity(memberEntity);
+    return EmailSignUpResponseDto.fromEntity(memberEntity);
   }
 
-  public void signIn(MemberSignInRequestDto memberSignInRequestDto) {
-    Member member = (Member) this.loadUserByUsername(memberSignInRequestDto.getEmail());
-    if (!this.passwordEncoder.matches(memberSignInRequestDto.getPassword(), member.getPassword())) {
+  public EmailSignInResponseDto signInWithEmail(EmailSignInRequestDto emailSignInRequestDto) {
+    Member member = (Member) this.loadUserByUsername(emailSignInRequestDto.getEmail());
+    if (!this.passwordEncoder.matches(emailSignInRequestDto.getPassword(), member.getPassword())) {
       throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
     }
 
-    HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getResponse();
-
     String accessToken = this.tokenProvider.generateAccessToken(member);
     String refreshToken = this.tokenProvider.generateRefreshToken();
-    this.tokenProvider.sendAccessAndRefreshToken(response, accessToken, refreshToken);
+
+    return EmailSignInResponseDto.builder()
+        .accessToken(accessToken)
+        .refreshToken(refreshToken)
+        .build();
   }
 
   public MemberEntity validateAndGetMember(Long memberId, Member member) {
