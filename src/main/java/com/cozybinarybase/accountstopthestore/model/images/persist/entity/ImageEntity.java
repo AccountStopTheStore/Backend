@@ -32,19 +32,19 @@ public class ImageEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "imageId", nullable = false, updatable = false)
-  private Long imageId;
+  private Long id;
 
   // 압축된 이미지와 썸네일이 원본 이미지를 참조하는 필드
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "originalImageId")
+  @JoinColumn(name = "originalImage")
   private ImageEntity originalImage;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "memberId", nullable = false)
+  @JoinColumn(name = "member", nullable = false)
   private MemberEntity member;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "accountId")
+  @JoinColumn(name = "accountBook")
   private AccountBookEntity accountBook;
 
   @Column(name = "imageFileName", nullable = false)

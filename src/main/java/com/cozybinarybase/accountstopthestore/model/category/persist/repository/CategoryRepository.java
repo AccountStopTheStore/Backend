@@ -9,13 +9,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> {
 
-  boolean existsByNameAndTypeAndMember_Id(String name, CategoryType type, Long memberId);
+  boolean existsByNameAndTypeAndMember(String name, CategoryType type, Long memberId);
 
-  List<CategoryEntity> findByMember_Id(Long memberId);
+  List<CategoryEntity> findByMember(Long memberId);
 
-  Optional<CategoryEntity> findByNameAndMember_Id(String categoryName, Long memberId);
+  Optional<CategoryEntity> findByNameAndMember(String categoryName, Long memberId);
 
-  void deleteAllByMemberId(Long id);
+  void deleteAllByMember(Long id);
 
-  Collection<CategoryEntity> findByMemberIdAndNameStartingWithIgnoreCase(Long id, String query);
+  Collection<CategoryEntity> findByMemberAndNameStartingWithIgnoreCase(Long id, String query);
 }

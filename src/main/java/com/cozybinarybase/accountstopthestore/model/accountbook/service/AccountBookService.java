@@ -10,7 +10,6 @@ import com.cozybinarybase.accountstopthestore.model.accountbook.dto.AccountBookU
 import com.cozybinarybase.accountstopthestore.model.accountbook.dto.AccountBookUpdateResponseDto;
 import com.cozybinarybase.accountstopthestore.model.accountbook.dto.StatisticsData;
 import com.cozybinarybase.accountstopthestore.model.accountbook.dto.TransactionStatisticsResponse;
-import com.cozybinarybase.accountstopthestore.model.accountbook.dto.constants.AccountBookCategoryResponseDto;
 import com.cozybinarybase.accountstopthestore.model.accountbook.dto.constants.TransactionType;
 import com.cozybinarybase.accountstopthestore.model.accountbook.exception.AccountBookNotValidException;
 import com.cozybinarybase.accountstopthestore.model.accountbook.persist.entity.AccountBookEntity;
@@ -21,14 +20,13 @@ import com.cozybinarybase.accountstopthestore.model.asset.persist.repository.Ass
 import com.cozybinarybase.accountstopthestore.model.category.exception.CategoryNotValidException;
 import com.cozybinarybase.accountstopthestore.model.category.persist.entity.CategoryEntity;
 import com.cozybinarybase.accountstopthestore.model.category.persist.repository.CategoryRepository;
+import com.cozybinarybase.accountstopthestore.model.images.exception.ImageNotValidException;
 import com.cozybinarybase.accountstopthestore.model.images.persist.entity.ImageEntity;
 import com.cozybinarybase.accountstopthestore.model.images.persist.entity.ImageEntity.ImageType;
 import com.cozybinarybase.accountstopthestore.model.images.persist.repository.ImageRepository;
-import com.cozybinarybase.accountstopthestore.model.images.exception.ImageNotValidException;
 import com.cozybinarybase.accountstopthestore.model.member.domain.Member;
 import com.cozybinarybase.accountstopthestore.model.member.service.MemberService;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.List;
@@ -36,7 +34,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -46,33 +43,32 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AccountBookService {
 
-  @Value("${app.domainUrl}")
-  private String domainUrl;
-
   private final AccountBookRepository accountBookRepository;
   private final CategoryRepository categoryRepository;
   private final AssetRepository assetRepository;
   private final MemberService memberService;
   private final AccountBook accountBook;
   private final ImageRepository imageRepository;
-
   private final AddressService addressService;
+  @Value("${app.domainUrl}")
+  private String domainUrl;
 
   @Transactional
   public AccountBookSaveResponseDto saveAccountBook(
       AccountBookSaveRequestDto requestDto, Member member) {
     memberService.validateAndGetMember(member);
 
-    CategoryEntity categoryEntity = categoryRepository.findByNameAndMember_Id(
+    CategoryEntity categoryEntity = categoryRepository.findByNameAndMember(
             requestDto.getCategoryName(), member.getId())
         .orElseThrow(CategoryNotValidException::new);
 
-    AssetEntity assetEntity = assetRepository.findByNameAndMember_Id(requestDto.getAssetName(),
+    AssetEntity assetEntity = assetRepository.findByNameAndMember(requestDto.getAssetName(),
         member.getId()).orElseThrow(
         AssetNotValidException::new);
 
     List<ImageEntity> images = requestDto.getImageIds().stream()
-        .map(imageId -> imageRepository.findByImageIdAndImageTypeAndMember_Id(imageId, ImageType.ORIGINAL, member.getId())
+        .map(imageId -> imageRepository.findByIdAndImageTypeAndMember(imageId, ImageType.ORIGINAL,
+                member.getId())
             .orElseThrow(() -> new ImageNotValidException()))
         .collect(Collectors.toList());
 
@@ -110,25 +106,25 @@ public class AccountBookService {
       AccountBookUpdateRequestDto requestDto, Member member) {
     memberService.validateAndGetMember(member);
 
-    AccountBookEntity accountBookEntity = accountBookRepository.findByIdAndMember_Id(accountId, member.getId())
+    AccountBookEntity accountBookEntity = accountBookRepository.findByIdAndMember(accountId, member.getId())
         .orElseThrow(AccountBookNotValidException::new);
 
-    CategoryEntity categoryEntity = categoryRepository.findByNameAndMember_Id(
+    CategoryEntity categoryEntity = categoryRepository.findByNameAndMember(
             requestDto.getCategoryName(), member.getId())
         .orElseThrow(CategoryNotValidException::new);
 
-    AssetEntity assetEntity = assetRepository.findByNameAndMember_Id(requestDto.getAssetName(),
+    AssetEntity assetEntity = assetRepository.findByNameAndMember(requestDto.getAssetName(),
         member.getId()).orElseThrow(
         AssetNotValidException::new);
 
     List<ImageEntity> images = requestDto.getImageIds().stream()
-        .map(imageId -> imageRepository.findByImageIdAndImageTypeAndMember_Id(imageId, ImageType.ORIGINAL, member.getId())
+        .map(imageId -> imageRepository.findByIdAndImageTypeAndMember(imageId, ImageType.ORIGINAL,
+                member.getId())
             .orElseThrow(ImageNotValidException::new))
         .collect(Collectors.toList());
 
     AccountBook accountBookDomain = AccountBook.fromEntity(accountBookEntity);
     accountBookDomain.updateAccountBook(requestDto, categoryEntity.getId(), assetEntity.getId(), images);
-
 
     images.forEach(image -> {
       image.setAccountBook(accountBookEntity);
@@ -159,7 +155,7 @@ public class AccountBookService {
   public void deleteAccountBook(Long accountId, Member member) {
     memberService.validateAndGetMember(member);
 
-    AccountBookEntity accountBookEntity = accountBookRepository.findByIdAndMember_Id(accountId,
+    AccountBookEntity accountBookEntity = accountBookRepository.findByIdAndMember(accountId,
             member.getId())
         .orElseThrow(AccountBookNotValidException::new);
 
@@ -177,17 +173,15 @@ public class AccountBookService {
 
     Pageable pageable = PageRequest.of(page, limit);
 
-    List<AccountBookEntity> accountBookEntityList =
-        accountBookRepository.findByTransactedAtBetweenAndTransactionTypeAndMember_Id(
+    List<AccountBookEntity> accountBookEntities =
+        accountBookRepository.findByTransactedAtBetweenAndTransactionTypeAndMember(
             startDate.atStartOfDay(),
             endDate.plusDays(1).atStartOfDay(),
             transactionType,
             member.getId(),
             pageable).getContent();
 
-    return accountBookEntityList.stream()
-        .map(AccountBookResponseDto::fromEntity)
-        .collect(Collectors.toList());
+    return AccountBookResponseDto.fromEntities(accountBookEntities);
   }
 
   @Transactional(readOnly = true)
@@ -199,15 +193,13 @@ public class AccountBookService {
     LocalDate startDate = yearMonth.atDay(1);
     LocalDate endDate = yearMonth.atEndOfMonth();
 
-    List<AccountBookEntity> accountBookEntityList =
-        accountBookRepository.findByTransactedAtBetweenAndMember_Id(
+    List<AccountBookEntity> accountBookEntities =
+        accountBookRepository.findByTransactedAtBetweenAndMember(
             startDate.atStartOfDay(),
             endDate.atTime(LocalTime.MAX),
             member.getId());
 
-    return accountBookEntityList.stream()
-        .map(AccountBookResponseDto::fromEntity)
-        .collect(Collectors.toList());
+    return AccountBookResponseDto.fromEntities(accountBookEntities);
   }
 
   @Transactional(readOnly = true)
@@ -215,7 +207,7 @@ public class AccountBookService {
       Member member) {
     memberService.validateAndGetMember(member);
 
-    List<String> categories = categoryRepository.findByMemberIdAndNameStartingWithIgnoreCase(
+    List<String> categories = categoryRepository.findByMemberAndNameStartingWithIgnoreCase(
             member.getId(), query)
         .stream()
         .map(CategoryEntity::getName)
@@ -235,21 +227,19 @@ public class AccountBookService {
 
     Pageable pageable = PageRequest.of(page, limit);
 
-    List<AccountBookEntity> accountBookEntityList =
-        accountBookRepository.findByMemoContainingAndTransactedAtBetweenAndCategory_NameAndAmountBetweenAndMember_Id(
+    List<AccountBookEntity> accountBookEntities =
+        accountBookRepository.findByMemoContainingAndTransactedAtBetweenAndCategory_NameAndAmountBetweenAndMember(
             keyword, startDate.atStartOfDay(), endDate.atStartOfDay(), categoryName, minPrice,
             maxPrice, member.getId(), pageable).getContent();
 
-    return accountBookEntityList.stream()
-        .map(AccountBookResponseDto::fromEntity)
-        .collect(Collectors.toList());
+    return AccountBookResponseDto.fromEntities(accountBookEntities);
   }
 
   @Transactional(readOnly = true)
   public List<AccountBookImageResponseDto> getAccountBookImages(Long accountId, Member member) {
     memberService.validateAndGetMember(member);
 
-    AccountBookEntity accountBookEntity = accountBookRepository.findByIdAndMember_Id(accountId,
+    AccountBookEntity accountBookEntity = accountBookRepository.findByIdAndMember(accountId,
             member.getId())
         .orElseThrow(AccountBookNotValidException::new);
 
@@ -259,17 +249,17 @@ public class AccountBookService {
 
     return originalImages.stream()
         .map(originalImage -> {
-          String compressedImageUrl = imageRepository.findByOriginalImage_ImageIdAndImageType(
-                  originalImage.getImageId(), ImageEntity.ImageType.COMPRESSED)
+          String compressedImageUrl = imageRepository.findByOriginalImageAndImageType(
+                  originalImage.getId(), ImageEntity.ImageType.COMPRESSED)
               .map(img -> domainUrl + "/images/" + img.getImageFileName())
               .orElse(null);
 
-          String thumbnailUrl = imageRepository.findByOriginalImage_ImageIdAndImageType(
-                  originalImage.getImageId(), ImageEntity.ImageType.THUMBNAIL)
+          String thumbnailUrl = imageRepository.findByOriginalImageAndImageType(
+                  originalImage.getId(), ImageEntity.ImageType.THUMBNAIL)
               .map(img -> domainUrl + "/images/" + img.getImageFileName())
               .orElse(null);
 
-          return new AccountBookImageResponseDto(originalImage.getImageId(), compressedImageUrl, thumbnailUrl);
+          return new AccountBookImageResponseDto(originalImage.getId(), compressedImageUrl, thumbnailUrl);
         })
         .collect(Collectors.toList());
   }
@@ -291,18 +281,17 @@ public class AccountBookService {
   public AccountBookResponseDto getAccountBook(Long accountId, Member member) {
     memberService.validateAndGetMember(member);
 
-    AccountBookEntity accountBookEntity = accountBookRepository.findByIdAndMember_Id(accountId,
+    AccountBookEntity accountBookEntity = accountBookRepository.findByIdAndMember(accountId,
             member.getId())
         .orElseThrow(AccountBookNotValidException::new);
 
     return AccountBookResponseDto.fromEntity(accountBookEntity);
   }
 
-  public List<AccountBookResponseDto> findAccountBooksNearby(double latitude, double longitude, double radius, Member member) {
+  public List<AccountBookResponseDto> findAccountBooksNearby(double latitude, double longitude, double radius,
+      Member member) {
     List<AccountBookEntity> accountBookEntities = accountBookRepository
         .findWithinRadius(latitude, longitude, radius, member.getId());
-    return accountBookEntities.stream()
-        .map(AccountBookResponseDto::fromEntity)
-        .collect(Collectors.toList());
+    return AccountBookResponseDto.fromEntities(accountBookEntities);
   }
 }

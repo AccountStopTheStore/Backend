@@ -4,6 +4,8 @@ import com.cozybinarybase.accountstopthestore.model.asset.persist.entity.AssetEn
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,5 +43,11 @@ public class AssetResponseDto {
         .createdAt(assetEntity.getCreatedAt())
         .updatedAt(assetEntity.getUpdatedAt())
         .build();
+  }
+
+  public static List<AssetResponseDto> fromEntities(List<AssetEntity> assetEntities) {
+    return assetEntities.stream()
+        .map(AssetResponseDto::fromEntity)
+        .collect(Collectors.toList());
   }
 }

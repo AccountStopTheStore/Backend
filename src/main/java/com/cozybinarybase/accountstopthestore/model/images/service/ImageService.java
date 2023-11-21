@@ -13,13 +13,10 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -29,27 +26,21 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class ImageService {
 
+  private static final int THUMBNAIL_WIDTH = 512;
+  private static final int THUMBNAIL_HEIGHT = 512;
+  private final String homeDirectory = System.getProperty("user.home");
+  private final Path imagesDirectory = Paths.get(homeDirectory, "asts-images");
+  private final ImageUtil imageUtil;
+  private final String MODEL_ID = "prebuilt-receipt";
+  private final ImageRepository imageRepository;
+  private final MemberService memberService;
+  private final AccountBookRepository accountBookRepository;
   @Value("${azure.ocr.endpoint}")
   private String AZURE_OCR_ENDPOINT;
   @Value("${azure.ocr.key}")
   private String AZURE_OCR_KEY;
   @Value("${app.domainUrl}")
   private String domainUrl;
-
-  private final String homeDirectory = System.getProperty("user.home");
-  private final Path imagesDirectory = Paths.get(homeDirectory, "asts-images");
-
-
-  private final ImageUtil imageUtil;
-
-  private static final int THUMBNAIL_WIDTH = 512;
-  private static final int THUMBNAIL_HEIGHT = 512;
-
-  private final String MODEL_ID = "prebuilt-receipt";
-  private final ImageRepository imageRepository;
-  private final MemberService memberService;
-  private final AccountBookRepository accountBookRepository;
-
 
   public ImageUploadResponseDto uploadFile(MultipartFile file, boolean isReceipt,
       Member member) throws IOException {
@@ -98,7 +89,7 @@ public class ImageService {
 
     // 원본 이미지의 id를 반환
     return ImageUploadResponseDto.builder()
-        .imageId(originalImage.getImageId())
+        .imageId(originalImage.getId())
         .build();
   }
 

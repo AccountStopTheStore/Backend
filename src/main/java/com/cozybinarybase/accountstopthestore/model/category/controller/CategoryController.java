@@ -2,9 +2,7 @@ package com.cozybinarybase.accountstopthestore.model.category.controller;
 
 import com.cozybinarybase.accountstopthestore.model.category.dto.CategoryResponseDto;
 import com.cozybinarybase.accountstopthestore.model.category.dto.CategorySaveRequestDto;
-import com.cozybinarybase.accountstopthestore.model.category.dto.CategorySaveResponseDto;
 import com.cozybinarybase.accountstopthestore.model.category.dto.CategoryUpdateRequestDto;
-import com.cozybinarybase.accountstopthestore.model.category.dto.CategoryUpdateResponseDto;
 import com.cozybinarybase.accountstopthestore.model.category.service.CategoryService;
 import com.cozybinarybase.accountstopthestore.model.member.domain.Member;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +34,7 @@ public class CategoryController {
       @RequestBody @Valid CategorySaveRequestDto requestDto,
       @AuthenticationPrincipal Member member
   ) {
-    CategorySaveResponseDto responseDto = categoryService.saveCategory(requestDto, member);
+    CategoryResponseDto responseDto = categoryService.saveCategory(requestDto, member);
     return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
   }
 
@@ -47,7 +45,7 @@ public class CategoryController {
       @RequestBody @Valid CategoryUpdateRequestDto requestDto,
       @AuthenticationPrincipal Member member
   ) {
-    CategoryUpdateResponseDto responseDto =
+    CategoryResponseDto responseDto =
         categoryService.updateCategory(categoryId, requestDto, member);
     return ResponseEntity.ok().body(responseDto);
   }
@@ -64,10 +62,10 @@ public class CategoryController {
 
   @Operation(summary = "카테고리 목록 조회", description = "유저가 카테고리 목록을 조회할 때 사용되는 API")
   @GetMapping
-  public ResponseEntity<?> allCategory(
+  public ResponseEntity<?> getAllCategories(
       @AuthenticationPrincipal Member member
   ) {
-    List<CategoryResponseDto> responseDtoList = categoryService.allCategory(member);
+    List<CategoryResponseDto> responseDtoList = categoryService.getAllCategories(member);
     return ResponseEntity.ok().body(responseDtoList);
   }
 }

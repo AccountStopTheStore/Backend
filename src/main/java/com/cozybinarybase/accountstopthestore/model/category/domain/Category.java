@@ -23,20 +23,29 @@ public class Category {
   private CategoryType type;
   private Long memberId;
 
+  public static Category fromEntity(CategoryEntity categoryEntity) {
+    return Category.builder()
+        .id(categoryEntity.getId())
+        .name(categoryEntity.getName())
+        .type(categoryEntity.getType())
+        .memberId(categoryEntity.getMember().getId())
+        .build();
+  }
+
   public Category createCategory(CategorySaveRequestDto requestDto, Long memberId) {
     return Category.builder()
-        .name(requestDto.getCategoryName())
-        .type(requestDto.getCategoryType())
+        .name(requestDto.getName())
+        .type(requestDto.getType())
         .memberId(memberId)
         .build();
   }
 
   public void updateCategory(CategoryUpdateRequestDto requestDto) {
-    if (requestDto.getCategoryName() != null) {
-      this.name = requestDto.getCategoryName();
+    if (requestDto.getName() != null) {
+      this.name = requestDto.getName();
     }
-    if (requestDto.getCategoryType() != null) {
-      this.type = requestDto.getCategoryType();
+    if (requestDto.getType() != null) {
+      this.type = requestDto.getType();
     }
   }
 
@@ -46,15 +55,6 @@ public class Category {
         .name(this.name)
         .type(this.type)
         .member(MemberEntity.builder().id(this.memberId).build())
-        .build();
-  }
-
-  public static Category fromEntity(CategoryEntity categoryEntity) {
-    return Category.builder()
-        .id(categoryEntity.getId())
-        .name(categoryEntity.getName())
-        .type(categoryEntity.getType())
-        .memberId(categoryEntity.getMember().getId())
         .build();
   }
 }

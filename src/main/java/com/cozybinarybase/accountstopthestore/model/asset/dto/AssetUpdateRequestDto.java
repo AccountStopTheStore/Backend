@@ -1,9 +1,6 @@
 package com.cozybinarybase.accountstopthestore.model.asset.dto;
 
 import com.cozybinarybase.accountstopthestore.model.asset.dto.constants.AssetType;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonFormat.Shape;
-import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import lombok.Getter;
@@ -29,9 +26,4 @@ public class AssetUpdateRequestDto {
 
   private String memo;
 
-  @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-  private LocalDateTime createdAt;
-
-  @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-  private LocalDateTime updatedAt;
 }

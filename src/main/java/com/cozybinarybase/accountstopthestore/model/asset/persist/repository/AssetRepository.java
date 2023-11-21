@@ -8,11 +8,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AssetRepository extends JpaRepository<AssetEntity, Long> {
 
-  boolean existsByNameAndTypeAndMember_Id(String name, AssetType type, Long memberId);
+  boolean existsByNameAndTypeAndMember(String name, AssetType type, Long memberId);
 
-  List<AssetEntity> findByMember_Id(Long memberId);
+  List<AssetEntity> findByMember(Long memberId);
 
-  Optional<AssetEntity> findByNameAndMember_Id(String name, Long memberId);
+  Optional<AssetEntity> findByNameAndMember(String name, Long memberId);
 
-  void deleteAllByMemberId(Long id);
+  void deleteAllByMember(Long id);
 }
