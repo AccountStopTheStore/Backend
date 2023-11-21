@@ -34,6 +34,7 @@ public class ChallengeGroupService {
   private final MemberService memberService;
   private final MessageRepository messageRepository;
   private final MessageService messageService;
+  private final MemberService memberService;
 
   public InviteLinkResponseDto createInviteLink(Long groupId, Member member) {
     ChallengeGroup challengeGroup = challengeGroupRepository.findById(groupId)
