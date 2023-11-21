@@ -1,8 +1,8 @@
 package com.cozybinarybase.accountstopthestore.model.asset.persist.entity;
 
+import com.cozybinarybase.accountstopthestore.BaseTimeEntity;
 import com.cozybinarybase.accountstopthestore.model.asset.dto.constants.AssetType;
 import com.cozybinarybase.accountstopthestore.model.member.persist.entity.MemberEntity;
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -20,8 +20,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @AllArgsConstructor
@@ -32,17 +30,18 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @DynamicUpdate
 @EntityListeners(AuditingEntityListener.class)
 @Entity(name = "asset")
-public class AssetEntity {
+public class AssetEntity extends BaseTimeEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "assetId", nullable = false, updatable = false)
   private Long id;
 
   @Column(name = "assetType")
   @Enumerated(EnumType.STRING)
   private AssetType type;
 
-  @Column(name = "assetName")
+  @Column(name = "name")
   private String name;
 
   @Column(name = "amount")
@@ -57,16 +56,7 @@ public class AssetEntity {
   @Column(name = "memo", columnDefinition = "TEXT")
   private String memo;
 
-  @CreatedDate
-  @Column(name = "createdAt")
-  private LocalDateTime createdAt;
-
-  @LastModifiedDate
-  @Column(name = "updatedAt")
-  private LocalDateTime updatedAt;
-
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "member")
   private MemberEntity member;
-
 }

@@ -18,7 +18,7 @@ public class AccountBookImageResponseDto {
 
   public static AccountBookImageResponseDto of(ImageEntity imageEntity) {
     return AccountBookImageResponseDto.builder()
-        .imageId(imageEntity.getImageId())
+        .imageId(imageEntity.getId())
         .imageUrl(imageEntity.getImageFileName())
         .thumbnailUrl(imageEntity.getImageFileName())
         .build();

@@ -33,6 +33,7 @@ public class MemberEntity extends BaseTimeEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "memberId", nullable = false, updatable = false)
   private Long id;
 
   @Enumerated(EnumType.STRING)

@@ -2,9 +2,7 @@ package com.cozybinarybase.accountstopthestore.model.asset.controller;
 
 import com.cozybinarybase.accountstopthestore.model.asset.dto.AssetResponseDto;
 import com.cozybinarybase.accountstopthestore.model.asset.dto.AssetSaveRequestDto;
-import com.cozybinarybase.accountstopthestore.model.asset.dto.AssetSaveResponseDto;
 import com.cozybinarybase.accountstopthestore.model.asset.dto.AssetUpdateRequestDto;
-import com.cozybinarybase.accountstopthestore.model.asset.dto.AssetUpdateResponseDto;
 import com.cozybinarybase.accountstopthestore.model.asset.service.AssetService;
 import com.cozybinarybase.accountstopthestore.model.member.domain.Member;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,23 +31,23 @@ public class AssetController {
 
   @Operation(summary = "자산 추가", description = "유저가 자산을 추가할 때 사용되는 API")
   @PostMapping
-  public ResponseEntity<AssetSaveResponseDto> saveAsset(
+  public ResponseEntity<AssetResponseDto> saveAsset(
       @RequestBody @Valid AssetSaveRequestDto requestDto,
       @AuthenticationPrincipal Member member
   ) {
-    AssetSaveResponseDto responseDto = assetService.saveAsset(requestDto, member);
+    AssetResponseDto responseDto = assetService.saveAsset(requestDto, member);
 
     return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
   }
 
   @Operation(summary = "자산 수정", description = "유저가 자산을 수정할 때 사용되는 API")
   @PutMapping("/{assetId}")
-  public ResponseEntity<AssetUpdateResponseDto> updateAsset(
+  public ResponseEntity<AssetResponseDto> updateAsset(
       @PathVariable Long assetId,
       @RequestBody @Valid AssetUpdateRequestDto requestDto,
       @AuthenticationPrincipal Member member
   ) {
-    AssetUpdateResponseDto responseDto = assetService.updateAsset(assetId, requestDto, member);
+    AssetResponseDto responseDto = assetService.updateAsset(assetId, requestDto, member);
 
     return ResponseEntity.ok(responseDto);
   }
@@ -67,10 +65,10 @@ public class AssetController {
 
   @Operation(summary = "자산 목록 조회", description = "유저가 자산 목록을 조회할 때 사용되는 API")
   @GetMapping
-  public ResponseEntity<List<AssetResponseDto>> allAsset(
+  public ResponseEntity<List<AssetResponseDto>> getAllAssets(
       @AuthenticationPrincipal Member member
   ) {
-    List<AssetResponseDto> responseDtoList = assetService.allAsset(member);
+    List<AssetResponseDto> responseDtoList = assetService.getAllAssets(member);
     return ResponseEntity.ok().body(responseDtoList);
   }
 }

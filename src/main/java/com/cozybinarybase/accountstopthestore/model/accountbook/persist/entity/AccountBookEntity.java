@@ -1,5 +1,6 @@
 package com.cozybinarybase.accountstopthestore.model.accountbook.persist.entity;
 
+import com.cozybinarybase.accountstopthestore.BaseTimeEntity;
 import com.cozybinarybase.accountstopthestore.model.accountbook.dto.constants.TransactionType;
 import com.cozybinarybase.accountstopthestore.model.asset.persist.entity.AssetEntity;
 import com.cozybinarybase.accountstopthestore.model.category.persist.entity.CategoryEntity;
@@ -28,8 +29,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @AllArgsConstructor
@@ -41,7 +40,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @QueryEntity
 @Entity(name = "AccountBook")
-public class AccountBookEntity {
+public class AccountBookEntity extends BaseTimeEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -70,14 +69,6 @@ public class AccountBookEntity {
   @Column(name = "isInstallment", nullable = false)
   private Boolean isInstallment;
 
-  @CreatedDate
-  @Column(name = "createdAt", nullable = false)
-  private LocalDateTime createdAt;
-
-  @LastModifiedDate
-  @Column(name = "updatedAt", nullable = false)
-  private LocalDateTime updatedAt;
-
   @Column(name = "latitude")
   private Double latitude;
 
@@ -85,15 +76,15 @@ public class AccountBookEntity {
   private Double longitude;
 
   @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "categoryId")
+  @JoinColumn(name = "category")
   private CategoryEntity category;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "memberId")
+  @JoinColumn(name = "member")
   private MemberEntity member;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "assetId")
+  @JoinColumn(name = "asset")
   private AssetEntity asset;
 
   @OneToMany(mappedBy = "accountBook", cascade = CascadeType.ALL)

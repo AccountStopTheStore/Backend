@@ -4,6 +4,7 @@ import com.cozybinarybase.accountstopthestore.BaseTimeEntity;
 import com.cozybinarybase.accountstopthestore.model.member.persist.entity.MemberEntity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -24,6 +25,7 @@ public class ChallengeGroupEntity extends BaseTimeEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "challengeGroupId", nullable = false, updatable = false)
   private Long id;
 
   private String name;

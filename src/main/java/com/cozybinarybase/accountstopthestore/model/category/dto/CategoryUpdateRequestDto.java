@@ -10,8 +10,8 @@ import lombok.Setter;
 public class CategoryUpdateRequestDto {
 
   @NotNull(message = "카테고리명을 입력해주세요.")
-  private String categoryName;
+  private String name;
 
   @NotNull(message = "카테고리 유형을 입력해주세요.")
-  private CategoryType categoryType;
+  private CategoryType type;
 }

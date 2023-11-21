@@ -2,6 +2,7 @@ package com.cozybinarybase.accountstopthestore.model.challenge.persist.entity;
 
 import com.cozybinarybase.accountstopthestore.BaseTimeEntity;
 import com.cozybinarybase.accountstopthestore.model.member.persist.entity.MemberEntity;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -22,6 +23,7 @@ public class MemberGroupEntity extends BaseTimeEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "memberGroupId", nullable = false, updatable = false)
   private long id;
 
   @ManyToOne(fetch = FetchType.LAZY)

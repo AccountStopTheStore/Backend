@@ -8,9 +8,7 @@ import static org.mockito.Mockito.when;
 import com.cozybinarybase.accountstopthestore.model.asset.domain.Asset;
 import com.cozybinarybase.accountstopthestore.model.asset.dto.AssetResponseDto;
 import com.cozybinarybase.accountstopthestore.model.asset.dto.AssetSaveRequestDto;
-import com.cozybinarybase.accountstopthestore.model.asset.dto.AssetSaveResponseDto;
 import com.cozybinarybase.accountstopthestore.model.asset.dto.AssetUpdateRequestDto;
-import com.cozybinarybase.accountstopthestore.model.asset.dto.AssetUpdateResponseDto;
 import com.cozybinarybase.accountstopthestore.model.asset.dto.constants.AssetType;
 import com.cozybinarybase.accountstopthestore.model.asset.persist.entity.AssetEntity;
 import com.cozybinarybase.accountstopthestore.model.asset.persist.repository.AssetRepository;
@@ -18,7 +16,6 @@ import com.cozybinarybase.accountstopthestore.model.member.domain.Member;
 import com.cozybinarybase.accountstopthestore.model.member.dto.constants.Authority;
 import com.cozybinarybase.accountstopthestore.model.member.persist.entity.MemberEntity;
 import com.cozybinarybase.accountstopthestore.model.member.service.MemberService;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -85,7 +82,7 @@ class AssetServiceTest {
     when(memberService.validateAndGetMember(loginMember)).thenReturn(member);
 
     // stub 2
-    when(assetRepository.existsByNameAndTypeAndMember_Id(any(), any(), any())).thenReturn(false);
+    when(assetRepository.existsByNameAndTypeAndMember(any(), any(), any())).thenReturn(false);
 
     // stub 3
     when(assetMock.createAsset(requestDto, 1L)).thenReturn(assetDomain);
@@ -94,7 +91,7 @@ class AssetServiceTest {
     when(assetRepository.save(any())).thenReturn(savedAsset);
 
     // when
-    AssetSaveResponseDto responseDto = assetService.saveAsset(requestDto, loginMember);
+    AssetResponseDto responseDto = assetService.saveAsset(requestDto, loginMember);
 
     // then
     assertEquals("카드", responseDto.getAssetType());
@@ -115,8 +112,8 @@ class AssetServiceTest {
     requestDto.setStatementDay(10);
     requestDto.setDueDay(20);
     requestDto.setMemo("메모 수정");
-    requestDto.setCreatedAt(LocalDateTime.of(2023, 11, 7, 11, 0, 0));
-    requestDto.setUpdatedAt(LocalDateTime.of(2023, 11, 7, 12, 0, 0));
+//    requestDto.setCreatedAt(LocalDateTime.of(2023, 11, 7, 11, 0, 0));
+//    requestDto.setUpdatedAt(LocalDateTime.of(2023, 11, 7, 12, 0, 0));
 
     MemberEntity member = new MemberEntity();
     member.setId(1L);
@@ -144,13 +141,13 @@ class AssetServiceTest {
     when(assetRepository.findById(any())).thenReturn(Optional.of(savedAsset));
 
     // stub 3
-    when(assetRepository.existsByNameAndTypeAndMember_Id(any(), any(), any())).thenReturn(false);
+    when(assetRepository.existsByNameAndTypeAndMember(any(), any(), any())).thenReturn(false);
 
     // stub 4
     when(assetRepository.save(any())).thenReturn(savedAsset);
 
     // when
-    AssetUpdateResponseDto responseDto = assetService.updateAsset(1L, requestDto, loginMember);
+    AssetResponseDto responseDto = assetService.updateAsset(1L, requestDto, loginMember);
 
     // then
     assertEquals("카드", responseDto.getAssetType());
@@ -235,10 +232,10 @@ class AssetServiceTest {
     when(memberService.validateAndGetMember(loginMember)).thenReturn(member);
 
     // stub 2
-    when(assetRepository.findByMember_Id(1L)).thenReturn(assetEntityList);
+    when(assetRepository.findByMember(1L)).thenReturn(assetEntityList);
 
     // when
-    List<AssetResponseDto> responseDtoList = assetService.allAsset(loginMember);
+    List<AssetResponseDto> responseDtoList = assetService.getAllAssets(loginMember);
 
     // then
     assertEquals(2, responseDtoList.size());
