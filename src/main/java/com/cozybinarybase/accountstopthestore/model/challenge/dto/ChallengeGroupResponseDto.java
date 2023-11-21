@@ -2,6 +2,7 @@ package com.cozybinarybase.accountstopthestore.model.challenge.dto;
 
 import com.cozybinarybase.accountstopthestore.model.challenge.persist.entity.ChallengeGroupEntity;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -38,5 +39,11 @@ public class ChallengeGroupResponseDto {
         .endAt(challengeGroupEntity.getEndAt())
         .adminId(challengeGroupEntity.getAdmin().getId())
         .build();
+  }
+
+  public static List<ChallengeGroupResponseDto> fromEntities(List<ChallengeGroupEntity> challengeGroupEntities) {
+    return challengeGroupEntities.stream()
+        .map(ChallengeGroupResponseDto::fromEntity)
+        .toList();
   }
 }
