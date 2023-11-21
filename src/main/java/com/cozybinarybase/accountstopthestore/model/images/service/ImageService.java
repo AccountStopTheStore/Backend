@@ -115,7 +115,7 @@ public class ImageService {
 
     // 원본 이미지의 id를 반환
     return ImageUploadResponseDto.builder()
-        .imageId(originalImage.getImageId())
+        .imageId(originalImage.getId())
         .ocrResult(ocrResultDto)
         .build();
   }

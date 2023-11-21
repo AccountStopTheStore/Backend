@@ -34,14 +34,14 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
       response.getWriter().write("{\"message\": \"이메일 가입자입니다.\"}");
       response.setStatus(HttpServletResponse.SC_OK);
       //TODO: 클라이언트 쪽에서 처음 페이지 받기
-      response.sendRedirect("https://asts.cozybinarybase.com:8443/login");
+      response.sendRedirect("http://localhost:5173/login");
       return;
     }
 
     String accessToken = this.tokenProvider.generateAccessToken(customOAuth2User);
     String refreshToken = this.tokenProvider.generateRefreshToken();
     this.tokenProvider.sendAccessAndRefreshToken(response, accessToken, refreshToken);
-    response.sendRedirect("https://asts.cozybinarybase.com:8443/account");
+    response.sendRedirect("http://localhost:5173/account");
     
   }
 }
