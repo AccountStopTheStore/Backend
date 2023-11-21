@@ -8,9 +8,7 @@ import static org.mockito.Mockito.when;
 import com.cozybinarybase.accountstopthestore.model.category.domain.Category;
 import com.cozybinarybase.accountstopthestore.model.category.dto.CategoryResponseDto;
 import com.cozybinarybase.accountstopthestore.model.category.dto.CategorySaveRequestDto;
-import com.cozybinarybase.accountstopthestore.model.category.dto.CategorySaveResponseDto;
 import com.cozybinarybase.accountstopthestore.model.category.dto.CategoryUpdateRequestDto;
-import com.cozybinarybase.accountstopthestore.model.category.dto.CategoryUpdateResponseDto;
 import com.cozybinarybase.accountstopthestore.model.category.dto.constants.CategoryType;
 import com.cozybinarybase.accountstopthestore.model.category.persist.entity.CategoryEntity;
 import com.cozybinarybase.accountstopthestore.model.category.persist.repository.CategoryRepository;
@@ -46,8 +44,8 @@ class CategoryServiceTest {
   void 카테고리_생성_test() throws Exception {
     // given
     CategorySaveRequestDto requestDto = new CategorySaveRequestDto();
-    requestDto.setCategoryName("월급");
-    requestDto.setCategoryType(CategoryType.INCOME);
+    requestDto.setName("월급");
+    requestDto.setType(CategoryType.INCOME);
 
     MemberEntity member = new MemberEntity();
     member.setId(1L);
@@ -64,8 +62,8 @@ class CategoryServiceTest {
     savedCategory.setMember(member);
 
     Category categoryDomain = Category.builder()
-        .name(requestDto.getCategoryName())
-        .type(requestDto.getCategoryType())
+        .name(requestDto.getName())
+        .type(requestDto.getType())
         .memberId(1L)
         .build();
 
@@ -73,7 +71,7 @@ class CategoryServiceTest {
     when(memberService.validateAndGetMember(loginMember)).thenReturn(member);
 
     // stub 2
-    when(categoryRepository.existsByNameAndTypeAndMember_Id(any(), any(), any())).thenReturn(false);
+    when(categoryRepository.existsByNameAndTypeAndMember(any(), any(), any())).thenReturn(false);
 
     // stub 3
     when(categoryMock.createCategory(requestDto, 1L)).thenReturn(categoryDomain);
@@ -82,19 +80,19 @@ class CategoryServiceTest {
     when(categoryRepository.save(any())).thenReturn(savedCategory);
 
     // when
-    CategorySaveResponseDto responseDto = categoryService.saveCategory(requestDto, loginMember);
+    CategoryResponseDto responseDto = categoryService.saveCategory(requestDto, loginMember);
 
     // then
-    assertEquals("월급", responseDto.getCategoryName());
-    assertEquals("수입", responseDto.getCategoryType());
+    assertEquals("월급", responseDto.getName());
+    assertEquals("수입", responseDto.getType());
   }
 
   @Test
   void 카테고리_수정_test() throws Exception {
     // given
     CategoryUpdateRequestDto requestDto = new CategoryUpdateRequestDto();
-    requestDto.setCategoryName("적금");
-    requestDto.setCategoryType(CategoryType.SPENDING);
+    requestDto.setName("적금");
+    requestDto.setType(CategoryType.SPENDING);
 
     MemberEntity member = new MemberEntity();
     member.setId(1L);
@@ -117,26 +115,26 @@ class CategoryServiceTest {
     when(categoryRepository.findById(any())).thenReturn(Optional.of(savedCategory));
 
     // stub 3
-    when(categoryRepository.existsByNameAndTypeAndMember_Id(any(), any(), any())).thenReturn(false);
+    when(categoryRepository.existsByNameAndTypeAndMember(any(), any(), any())).thenReturn(false);
 
     // stub 4
     when(categoryRepository.save(any())).thenReturn(savedCategory);
 
     // when
-    CategoryUpdateResponseDto responseDto =
+    CategoryResponseDto responseDto =
         categoryService.updateCategory(1L, requestDto, loginMember);
 
     // then
-    assertEquals("적금", responseDto.getCategoryName());
-    assertEquals("지출", responseDto.getCategoryType());
+    assertEquals("적금", responseDto.getName());
+    assertEquals("지출", responseDto.getType());
   }
 
   @Test
   void 카테고리_삭제_test() throws Exception {
     // given
     CategoryUpdateRequestDto requestDto = new CategoryUpdateRequestDto();
-    requestDto.setCategoryName("적금");
-    requestDto.setCategoryType(CategoryType.SPENDING);
+    requestDto.setName("적금");
+    requestDto.setType(CategoryType.SPENDING);
 
     MemberEntity member = new MemberEntity();
     member.setId(1L);
@@ -169,8 +167,8 @@ class CategoryServiceTest {
   void 카테고리_목록_test() throws Exception {
     // given
     CategoryUpdateRequestDto requestDto = new CategoryUpdateRequestDto();
-    requestDto.setCategoryName("적금");
-    requestDto.setCategoryType(CategoryType.SPENDING);
+    requestDto.setName("적금");
+    requestDto.setType(CategoryType.SPENDING);
 
     MemberEntity member = new MemberEntity();
     member.setId(1L);
@@ -200,17 +198,17 @@ class CategoryServiceTest {
     when(memberService.validateAndGetMember(loginMember)).thenReturn(member);
 
     // stub 2
-    when(categoryRepository.findByMember_Id(1L)).thenReturn(categoryEntityList);
+    when(categoryRepository.findByMember(1L)).thenReturn(categoryEntityList);
 
     // when
     List<CategoryResponseDto> responseDtoList =
-        categoryService.allCategory(Member.fromEntity(member));
+        categoryService.getAllCategories(Member.fromEntity(member));
 
     // then
     assertEquals(2, responseDtoList.size());
-    assertEquals("월급", responseDtoList.get(0).getCategoryName());
-    assertEquals("수입", responseDtoList.get(0).getCategoryType());
-    assertEquals("적금", responseDtoList.get(1).getCategoryName());
-    assertEquals("지출", responseDtoList.get(1).getCategoryType());
+    assertEquals("월급", responseDtoList.get(0).getName());
+    assertEquals("수입", responseDtoList.get(0).getType());
+    assertEquals("적금", responseDtoList.get(1).getName());
+    assertEquals("지출", responseDtoList.get(1).getType());
   }
 }

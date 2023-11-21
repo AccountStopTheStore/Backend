@@ -1,5 +1,6 @@
 package com.cozybinarybase.accountstopthestore.model.category.persist.entity;
 
+import com.cozybinarybase.accountstopthestore.BaseTimeEntity;
 import com.cozybinarybase.accountstopthestore.model.category.dto.constants.CategoryType;
 import com.cozybinarybase.accountstopthestore.model.member.persist.entity.MemberEntity;
 import javax.persistence.Column;
@@ -24,18 +25,18 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity(name = "category")
-public class CategoryEntity {
+public class CategoryEntity extends BaseTimeEntity {
 
   @Id
   @Column(name = "categoryId")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "categoryName")
+  @Column(name = "name")
   private String name;
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "categoryType")
+  @Column(name = "type")
   private CategoryType type;
 
   @ManyToOne(fetch = FetchType.LAZY)

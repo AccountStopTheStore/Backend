@@ -1,6 +1,8 @@
 package com.cozybinarybase.accountstopthestore.model.category.dto;
 
 import com.cozybinarybase.accountstopthestore.model.category.persist.entity.CategoryEntity;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,15 +14,21 @@ import lombok.NoArgsConstructor;
 @Getter
 public class CategoryResponseDto {
 
-  private Long categoryId;
-  private String categoryType;
-  private String categoryName;
+  private Long id;
+  private String type;
+  private String name;
 
   public static CategoryResponseDto fromEntity(CategoryEntity categoryEntity) {
     return CategoryResponseDto.builder()
-        .categoryId(categoryEntity.getId())
-        .categoryType(categoryEntity.getType().getValue())
-        .categoryName(categoryEntity.getName())
+        .id(categoryEntity.getId())
+        .type(categoryEntity.getType().getValue())
+        .name(categoryEntity.getName())
         .build();
+  }
+
+  public static List<CategoryResponseDto> fromEntities(List<CategoryEntity> categoryEntities) {
+    return categoryEntities.stream()
+        .map(CategoryResponseDto::fromEntity)
+        .collect(Collectors.toList());
   }
 }

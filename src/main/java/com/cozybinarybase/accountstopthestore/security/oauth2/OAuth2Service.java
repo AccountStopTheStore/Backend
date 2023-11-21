@@ -1,7 +1,6 @@
 package com.cozybinarybase.accountstopthestore.security.oauth2;
 
 import com.cozybinarybase.accountstopthestore.model.member.dto.constants.Authority;
-import com.cozybinarybase.accountstopthestore.model.member.persist.entity.MemberEntity;
 import com.cozybinarybase.accountstopthestore.model.member.persist.repository.MemberRepository;
 import java.util.Collections;
 import java.util.Map;
@@ -31,19 +30,12 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
 
     Map<String, Object> attributes = oAuth2User.getAttributes();
 
-    String email = (String) attributes.get("email");
-
     CustomOAuth2User customOAuth2User = new CustomOAuth2User(
         Collections.singleton(new SimpleGrantedAuthority(Authority.USER.name())),
         attributes,
         userNameAttributeName
     );
-
-    MemberEntity member = memberRepository.findByEmail(email)
-        .orElseGet(() -> memberRepository.save(
-            customOAuth2User.toEntity()
-        ));
-
+    
     return customOAuth2User;
   }
 }

@@ -34,18 +34,14 @@ public class ImageService {
   private String domainUrl;
   private final String homeDirectory = System.getProperty("user.home");
   private final Path imagesDirectory = Paths.get(homeDirectory, "asts-images");
-
-
   private final ImageUtil imageUtil;
   private static final int THUMBNAIL_WIDTH = 512;
   private static final int THUMBNAIL_HEIGHT = 512;
-
 
   private final ImageRepository imageRepository;
   private final MemberService memberService;
   private final AccountBookRepository accountBookRepository;
   private final OcrUtil ocrUtil;
-
 
   public ImageUploadResponseDto uploadFile(MultipartFile file, boolean isReceipt,
       Member member) throws Exception {

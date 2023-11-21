@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,20 +19,20 @@ import org.springframework.data.repository.query.Param;
 public interface AccountBookRepository extends JpaRepository<AccountBookEntity, Long>,
     AccountBookRepositoryCustom {
 
-  Optional<AccountBookEntity> findByIdAndMember_Id(Long accountBookId, Long memberId);
+  Optional<AccountBookEntity> findByIdAndMember(Long accountBookId, Long memberId);
 
-  Page<AccountBookEntity> findByTransactedAtBetweenAndTransactionTypeAndMember_Id(
+  Page<AccountBookEntity> findByTransactedAtBetweenAndTransactionTypeAndMember(
       LocalDateTime startDate, LocalDateTime endDate, TransactionType transactionType,
       Long memberId, Pageable pageable);
 
   Page<AccountBookEntity> findByMember_IdAndCategory_NameStartingWithIgnoreCase(Long memberId,
       String keyword, Pageable pageable);
 
-  Page<AccountBookEntity> findByMemoContainingAndTransactedAtBetweenAndCategory_NameAndAmountBetweenAndMember_Id(
+  Page<AccountBookEntity> findByMemoContainingAndTransactedAtBetweenAndCategory_NameAndAmountBetweenAndMember(
       String keyword, LocalDateTime startDate, LocalDateTime endDate, String categoryName,
       Long minPrice, Long maxPrice, Long memberId, Pageable pageable);
-      
-  void deleteAllByMemberId(Long id);
+
+  void deleteAllByMember(Long id);
 
   default List<StatisticsData> findTransactionStatistics(LocalDate startDate, LocalDate endDate,
       TransactionType transactionType, Long memberId) {
@@ -62,7 +61,7 @@ public interface AccountBookRepository extends JpaRepository<AccountBookEntity, 
       @Param("radius") double radius,
       @Param("memberId") Long memberId);
 
-  List<AccountBookEntity> findByTransactedAtBetweenAndMember_Id(
+  List<AccountBookEntity> findByTransactedAtBetweenAndMember(
       LocalDateTime startDateTime,
       LocalDateTime endDateTime,
       Long memberId

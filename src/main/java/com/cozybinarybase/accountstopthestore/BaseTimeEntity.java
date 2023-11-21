@@ -1,5 +1,7 @@
 package com.cozybinarybase.accountstopthestore;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
@@ -16,9 +18,11 @@ public abstract class BaseTimeEntity {
 
   @CreatedDate
   @Column(updatable = false)
+  @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
   private LocalDateTime createdAt;
 
   @LastModifiedDate
   @Column(updatable = true)
+  @JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
   private LocalDateTime updatedAt;
 }

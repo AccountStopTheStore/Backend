@@ -3,9 +3,7 @@ package com.cozybinarybase.accountstopthestore.model.asset.service;
 import com.cozybinarybase.accountstopthestore.model.asset.domain.Asset;
 import com.cozybinarybase.accountstopthestore.model.asset.dto.AssetResponseDto;
 import com.cozybinarybase.accountstopthestore.model.asset.dto.AssetSaveRequestDto;
-import com.cozybinarybase.accountstopthestore.model.asset.dto.AssetSaveResponseDto;
 import com.cozybinarybase.accountstopthestore.model.asset.dto.AssetUpdateRequestDto;
-import com.cozybinarybase.accountstopthestore.model.asset.dto.AssetUpdateResponseDto;
 import com.cozybinarybase.accountstopthestore.model.asset.dto.constants.AssetType;
 import com.cozybinarybase.accountstopthestore.model.asset.exception.AssetNotValidException;
 import com.cozybinarybase.accountstopthestore.model.asset.persist.entity.AssetEntity;
@@ -13,7 +11,6 @@ import com.cozybinarybase.accountstopthestore.model.asset.persist.repository.Ass
 import com.cozybinarybase.accountstopthestore.model.member.domain.Member;
 import com.cozybinarybase.accountstopthestore.model.member.service.MemberService;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +24,7 @@ public class AssetService {
   private final Asset asset;
 
   @Transactional
-  public AssetSaveResponseDto saveAsset(
+  public AssetResponseDto saveAsset(
       AssetSaveRequestDto requestDto, Member member
   ) {
     memberService.validateAndGetMember(member);
@@ -36,11 +33,11 @@ public class AssetService {
     AssetEntity assetEntity =
         assetRepository.save(asset.createAsset(requestDto, member.getId()).toEntity());
 
-    return AssetSaveResponseDto.fromEntity(assetEntity);
+    return AssetResponseDto.fromEntity(assetEntity);
   }
 
   @Transactional
-  public AssetUpdateResponseDto updateAsset(
+  public AssetResponseDto updateAsset(
       Long assetId, AssetUpdateRequestDto requestDto, Member member
   ) {
     memberService.validateAndGetMember(member);
@@ -57,7 +54,7 @@ public class AssetService {
     AssetEntity updateAssetEntity = assetDomain.toEntity();
     assetRepository.save(updateAssetEntity);
 
-    return AssetUpdateResponseDto.fromEntity(updateAssetEntity);
+    return AssetResponseDto.fromEntity(updateAssetEntity);
   }
 
   @Transactional
@@ -72,18 +69,16 @@ public class AssetService {
   }
 
   @Transactional(readOnly = true)
-  public List<AssetResponseDto> allAsset(Member member) {
+  public List<AssetResponseDto> getAllAssets(Member member) {
     memberService.validateAndGetMember(member);
 
-    List<AssetEntity> assetEntityList = assetRepository.findByMember_Id(member.getId());
+    List<AssetEntity> assetEntities = assetRepository.findByMember(member.getId());
 
-    return assetEntityList.stream()
-        .map(AssetResponseDto::fromEntity)
-        .collect(Collectors.toList());
+    return AssetResponseDto.fromEntities(assetEntities);
   }
 
   private void existAssetOfMember(String assetName, AssetType assetType, Long memberId) {
-    if (assetRepository.existsByNameAndTypeAndMember_Id(assetName, assetType, memberId)) {
+    if (assetRepository.existsByNameAndTypeAndMember(assetName, assetType, memberId)) {
       throw new AssetNotValidException("이미 존재하는 자산입니다.");
     }
   }

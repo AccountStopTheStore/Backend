@@ -31,6 +31,7 @@ public class ChallengeGroupService {
   private final ChallengeGroupRepository challengeGroupRepository;
   private final MemberGroupRepository memberGroupRepository;
   private final MemberRepository memberRepository;
+  private final MemberService memberService;
   private final MessageRepository messageRepository;
   private final MessageService messageService;
   private final MemberService memberService;
@@ -119,7 +120,6 @@ public class ChallengeGroupService {
     return memberIds.contains(member.getId());
   }
 
-  //TODO
   public List<ChallengeGroupResponseDto> getChallengeGroups(Member member) {
     memberService.validateAndGetMember(member);
     List<ChallengeGroupEntity> challengeGroupEntities = memberGroupRepository.findByMember(member.toEntity())

@@ -40,6 +40,27 @@ public class AccountBook {
   private String assetName;
   private List<ImageEntity> images;
 
+  public static AccountBook fromEntity(AccountBookEntity accountBookEntity) {
+    return AccountBook.builder()
+        .id(accountBookEntity.getId())
+        .transactionType(accountBookEntity.getTransactionType())
+        .transactionDetail(accountBookEntity.getTransactionDetail())
+        .transactedAt(accountBookEntity.getTransactedAt())
+        .amount(accountBookEntity.getAmount())
+        .address(accountBookEntity.getAddress())
+        .memo(accountBookEntity.getMemo())
+        .isInstallment(accountBookEntity.getIsInstallment())
+        .createdAt(accountBookEntity.getCreatedAt())
+        .updatedAt(accountBookEntity.getUpdatedAt())
+        .categoryId(accountBookEntity.getCategory().getId())
+        .memberId(accountBookEntity.getMember().getId())
+        .assetId(accountBookEntity.getAsset().getId())
+        .categoryName(accountBookEntity.getCategory().getName())
+        .assetName(accountBookEntity.getAsset().getName())
+        .images(accountBookEntity.getImages())
+        .build();
+  }
+
   public AccountBook createAccountBook(AccountBookSaveRequestDto requestDto, Long categoryId,
       Long assetId, Long memberId, String categoryName, String assetName, List<ImageEntity> images) {
     return AccountBook.builder()
@@ -105,33 +126,10 @@ public class AccountBook {
         .address(this.address)
         .memo(this.memo)
         .isInstallment(this.isInstallment)
-        .createdAt(this.createdAt)
-        .updatedAt(this.updatedAt)
         .category(CategoryEntity.builder().id(this.categoryId).name(this.categoryName).build())
         .member(MemberEntity.builder().id(this.memberId).build())
         .asset(AssetEntity.builder().id(this.assetId).name(this.assetName).build())
         .images(this.images)
-        .build();
-  }
-
-  public static AccountBook fromEntity(AccountBookEntity accountBookEntity) {
-    return AccountBook.builder()
-        .id(accountBookEntity.getId())
-        .transactionType(accountBookEntity.getTransactionType())
-        .transactionDetail(accountBookEntity.getTransactionDetail())
-        .transactedAt(accountBookEntity.getTransactedAt())
-        .amount(accountBookEntity.getAmount())
-        .address(accountBookEntity.getAddress())
-        .memo(accountBookEntity.getMemo())
-        .isInstallment(accountBookEntity.getIsInstallment())
-        .createdAt(accountBookEntity.getCreatedAt())
-        .updatedAt(accountBookEntity.getUpdatedAt())
-        .categoryId(accountBookEntity.getCategory().getId())
-        .memberId(accountBookEntity.getMember().getId())
-        .assetId(accountBookEntity.getAsset().getId())
-        .categoryName(accountBookEntity.getCategory().getName())
-        .assetName(accountBookEntity.getAsset().getName())
-        .images(accountBookEntity.getImages())
         .build();
   }
 }

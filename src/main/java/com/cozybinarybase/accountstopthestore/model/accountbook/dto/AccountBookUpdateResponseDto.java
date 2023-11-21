@@ -39,7 +39,7 @@ public class AccountBookUpdateResponseDto {
 
   public static AccountBookUpdateResponseDto fromEntity(AccountBookEntity accountBookEntity) {
     List<Long> imageIdList = accountBookEntity.getImages().stream()
-        .map(ImageEntity::getImageId)
+        .map(ImageEntity::getId)
         .collect(Collectors.toList());
 
     return AccountBookUpdateResponseDto.builder()

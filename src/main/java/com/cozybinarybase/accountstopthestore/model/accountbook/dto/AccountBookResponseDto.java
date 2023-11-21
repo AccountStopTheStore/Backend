@@ -45,7 +45,7 @@ public class AccountBookResponseDto {
 
   public static AccountBookResponseDto fromEntity(AccountBookEntity accountBookEntity) {
     List<Long> imageIdList = accountBookEntity.getImages().stream()
-        .map(ImageEntity::getImageId)
+        .map(ImageEntity::getId)
         .collect(Collectors.toList());
 
     return AccountBookResponseDto.builder()
@@ -65,5 +65,11 @@ public class AccountBookResponseDto {
         .latitude(accountBookEntity.getLatitude())
         .longitude(accountBookEntity.getLongitude())
         .build();
+  }
+
+  public static List<AccountBookResponseDto> fromEntities(List<AccountBookEntity> accountBookEntities) {
+    return accountBookEntities.stream()
+        .map(AccountBookResponseDto::fromEntity)
+        .collect(Collectors.toList());
   }
 }

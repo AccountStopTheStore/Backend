@@ -8,6 +8,7 @@ import com.cozybinarybase.accountstopthestore.model.asset.persist.repository.Ass
 import com.cozybinarybase.accountstopthestore.model.category.dto.constants.CategoryType;
 import com.cozybinarybase.accountstopthestore.model.category.persist.entity.CategoryEntity;
 import com.cozybinarybase.accountstopthestore.model.category.persist.repository.CategoryRepository;
+import com.cozybinarybase.accountstopthestore.model.challenge.persist.repository.MemberGroupRepository;
 import com.cozybinarybase.accountstopthestore.model.images.persist.repository.ImageRepository;
 import com.cozybinarybase.accountstopthestore.model.member.domain.Member;
 import com.cozybinarybase.accountstopthestore.model.member.dto.EmailCodeVerifyRequestDto;
@@ -46,29 +47,26 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @RequiredArgsConstructor
 public class MemberService implements UserDetailsService {
 
-  private final MemberRepository memberRepository;
-  private final PasswordEncoder passwordEncoder;
-  private final TokenProvider tokenProvider;
-
-  private final AssetRepository assetRepository;
-  private final AccountBookRepository accountBookRepository;
-  private final CategoryRepository categoryRepository;
-  private final ImageRepository imageRepository;
-  private final VerificationCodeRepository verificationCodeRepository;
-  private final PasswordResetRepository passwordResetRepository;
-
-  private final SimpleEmailService simpleEmailService;
-  private final MemberUtil memberUtil;
-
-  @Value("${spring.profiles.active}")
-  private String activeProfile;
-
   private final static String[] categoryNames = {
       "가전/가구", "가전생활/서비스", "교육/학원", "미용",
       "스포츠/문화/레저", "여행/교통", "요식/유흥", "유통",
       "음/식료품", "의료", "의류/잡화", "자동차",
       "전자상거래", "주유"
   };
+  private final MemberRepository memberRepository;
+  private final PasswordEncoder passwordEncoder;
+  private final TokenProvider tokenProvider;
+  private final AssetRepository assetRepository;
+  private final AccountBookRepository accountBookRepository;
+  private final CategoryRepository categoryRepository;
+  private final ImageRepository imageRepository;
+  private final VerificationCodeRepository verificationCodeRepository;
+  private final PasswordResetRepository passwordResetRepository;
+  private final MemberGroupRepository memberGroupRepository;
+  private final SimpleEmailService simpleEmailService;
+  private final MemberUtil memberUtil;
+  @Value("${spring.profiles.active}")
+  private String activeProfile;
 
   @Override
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -128,10 +126,10 @@ public class MemberService implements UserDetailsService {
     String refreshToken = this.tokenProvider.generateRefreshToken();
 
     memberRepository.findByEmail(member.getEmail())
-            .ifPresent(memberEntity -> {
-              memberEntity.setRefreshToken(refreshToken);
-              memberRepository.save(memberEntity);
-            });
+        .ifPresent(memberEntity -> {
+          memberEntity.setRefreshToken(refreshToken);
+          memberRepository.save(memberEntity);
+        });
 
     tokenProvider.sendAccessAndRefreshToken(response, accessToken, refreshToken);
   }
@@ -152,13 +150,15 @@ public class MemberService implements UserDetailsService {
     );
   }
 
+  //TODO: 회원 탈퇴 시, 관련 데이터 삭제 - 멤버 그룹(방장일 경우 어떻게?)
   public MessageResponseDto withdrawal(Member member) {
     MemberEntity memberEntity = this.validateAndGetMember(member);
     Long memberId = memberEntity.getId();
-    imageRepository.deleteAllByMemberId(memberId);
-    accountBookRepository.deleteAllByMemberId(memberId);
-    assetRepository.deleteAllByMemberId(memberId);
-    categoryRepository.deleteAllByMemberId(memberId);
+    imageRepository.deleteAllByMember(memberId);
+    accountBookRepository.deleteAllByMember(memberId);
+    assetRepository.deleteAllByMember(memberId);
+    categoryRepository.deleteAllByMember(memberId);
+    memberGroupRepository.deleteAllByMember(memberId);
     memberRepository.deleteById(memberId);
     return MessageResponseDto.builder()
         .message("회원 탈퇴가 완료되었습니다.")
@@ -207,7 +207,7 @@ public class MemberService implements UserDetailsService {
 
   public MessageResponseDto sendResetPasswordLink(String email) {
     String token = UUID.randomUUID().toString();
-    MemberEntity memberEntity = memberRepository.findMemberIdByEmail(email)
+    MemberEntity memberEntity = memberRepository.findByEmail(email)
         .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 이메일입니다. 회원가입을 먼저 진행해 주세요."));
 
     Long memberId = memberEntity.getId();

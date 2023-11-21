@@ -30,6 +30,21 @@ public class Asset {
   private LocalDateTime updatedAt;
   private Long memberId;
 
+  public static Asset fromEntity(AssetEntity assetEntity) {
+    return Asset.builder()
+        .id(assetEntity.getId())
+        .type(assetEntity.getType())
+        .name(assetEntity.getName())
+        .amount(assetEntity.getAmount())
+        .statementDay(assetEntity.getStatementDay())
+        .dueDay(assetEntity.getDueDay())
+        .memo(assetEntity.getMemo())
+        .createdAt(assetEntity.getCreatedAt())
+        .updatedAt(assetEntity.getUpdatedAt())
+        .memberId(assetEntity.getMember().getId())
+        .build();
+  }
+
   public Asset createAsset(AssetSaveRequestDto requestDto, Long memberId) {
 
     return Asset.builder()
@@ -62,12 +77,6 @@ public class Asset {
     if (requestDto.getMemo() != null) {
       this.memo = requestDto.getMemo();
     }
-    if (requestDto.getCreatedAt() != null) {
-      this.createdAt = requestDto.getCreatedAt();
-    }
-    if (requestDto.getUpdatedAt() != null) {
-      this.updatedAt = requestDto.getUpdatedAt();
-    }
   }
 
   public AssetEntity toEntity() {
@@ -79,24 +88,7 @@ public class Asset {
         .statementDay(this.statementDay)
         .dueDay(this.dueDay)
         .memo(this.memo)
-        .createdAt(this.createdAt)
-        .updatedAt(this.updatedAt)
         .member(MemberEntity.builder().id(this.memberId).build())
-        .build();
-  }
-
-  public static Asset fromEntity(AssetEntity assetEntity) {
-    return Asset.builder()
-        .id(assetEntity.getId())
-        .type(assetEntity.getType())
-        .name(assetEntity.getName())
-        .amount(assetEntity.getAmount())
-        .statementDay(assetEntity.getStatementDay())
-        .dueDay(assetEntity.getDueDay())
-        .memo(assetEntity.getMemo())
-        .createdAt(assetEntity.getCreatedAt())
-        .updatedAt(assetEntity.getUpdatedAt())
-        .memberId(assetEntity.getMember().getId())
         .build();
   }
 }
