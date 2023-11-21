@@ -35,13 +35,7 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
         attributes,
         userNameAttributeName
     );
-
-//    String email = (String) attributes.get("email");
-//    MemberEntity member = memberRepository.findByEmail(email)
-//        .orElseGet(() -> memberRepository.save(
-//            customOAuth2User.toEntity()
-//        ));
-
+    
     return customOAuth2User;
   }
 }

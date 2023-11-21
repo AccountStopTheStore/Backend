@@ -42,5 +42,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     String refreshToken = this.tokenProvider.generateRefreshToken();
     this.tokenProvider.sendAccessAndRefreshToken(response, accessToken, refreshToken);
     response.sendRedirect("https://asts.cozybinarybase.com:8443/account");
+    
   }
 }
