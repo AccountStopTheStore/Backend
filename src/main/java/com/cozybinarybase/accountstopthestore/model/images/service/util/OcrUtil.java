@@ -81,7 +81,7 @@ public class OcrUtil {
 
       System.out.println("Waiting for analysis result...");
 
-      Thread.sleep(2000);
+      Thread.sleep(1000);
     }
   }
 }
