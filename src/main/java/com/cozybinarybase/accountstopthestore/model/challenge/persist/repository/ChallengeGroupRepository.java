@@ -10,5 +10,5 @@ public interface ChallengeGroupRepository extends JpaRepository<ChallengeGroupEn
 
   Optional<ChallengeGroupEntity> findByInviteLink(String inviteLink);
 
-  void deleteAllByMemberId(Long memberId);
+  void deleteAllByAdmin(Long memberId);
 }

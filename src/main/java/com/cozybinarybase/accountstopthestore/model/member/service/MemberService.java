@@ -165,9 +165,9 @@ public class MemberService implements UserDetailsService {
     accountBookRepository.deleteAllByMemberId(memberId);
     assetRepository.deleteAllByMemberId(memberId);
     categoryRepository.deleteAllByMemberId(memberId);
-    messageRepository.deleteAllByMemberId(memberId);
+    messageRepository.deleteAllBySender(memberId);
     memberGroupRepository.deleteAllByMemberId(memberId);
-    challengeGroupRepository.deleteAllByMemberId(memberId);
+    challengeGroupRepository.deleteAllByAdmin(memberId);
     memberRepository.deleteById(memberId);
     return MessageResponseDto.builder()
         .message("회원 탈퇴가 완료되었습니다.")
