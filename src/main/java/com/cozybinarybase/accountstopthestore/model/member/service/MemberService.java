@@ -8,6 +8,8 @@ import com.cozybinarybase.accountstopthestore.model.asset.persist.repository.Ass
 import com.cozybinarybase.accountstopthestore.model.category.dto.constants.CategoryType;
 import com.cozybinarybase.accountstopthestore.model.category.persist.entity.CategoryEntity;
 import com.cozybinarybase.accountstopthestore.model.category.persist.repository.CategoryRepository;
+import com.cozybinarybase.accountstopthestore.model.challenge.persist.repository.ChallengeGroupRepository;
+import com.cozybinarybase.accountstopthestore.model.challenge.persist.repository.MemberGroupRepository;
 import com.cozybinarybase.accountstopthestore.model.images.persist.repository.ImageRepository;
 import com.cozybinarybase.accountstopthestore.model.member.domain.Member;
 import com.cozybinarybase.accountstopthestore.model.member.dto.EmailCodeVerifyRequestDto;
@@ -22,6 +24,7 @@ import com.cozybinarybase.accountstopthestore.model.member.persist.repository.Me
 import com.cozybinarybase.accountstopthestore.model.member.persist.repository.PasswordResetRepository;
 import com.cozybinarybase.accountstopthestore.model.member.persist.repository.VerificationCodeRepository;
 import com.cozybinarybase.accountstopthestore.model.member.service.util.MemberUtil;
+import com.cozybinarybase.accountstopthestore.model.message.persist.repository.MessageRepository;
 import com.cozybinarybase.accountstopthestore.security.TokenProvider;
 import java.util.Arrays;
 import java.util.List;
@@ -56,6 +59,9 @@ public class MemberService implements UserDetailsService {
   private final ImageRepository imageRepository;
   private final VerificationCodeRepository verificationCodeRepository;
   private final PasswordResetRepository passwordResetRepository;
+  private final ChallengeGroupRepository challengeGroupRepository;
+  private final MemberGroupRepository memberGroupRepository;
+  private final MessageRepository messageRepository;
 
   private final SimpleEmailService simpleEmailService;
   private final MemberUtil memberUtil;
@@ -159,6 +165,9 @@ public class MemberService implements UserDetailsService {
     accountBookRepository.deleteAllByMemberId(memberId);
     assetRepository.deleteAllByMemberId(memberId);
     categoryRepository.deleteAllByMemberId(memberId);
+    messageRepository.deleteAllByMemberId(memberId);
+    memberGroupRepository.deleteAllByMemberId(memberId);
+    challengeGroupRepository.deleteAllByMemberId(memberId);
     memberRepository.deleteById(memberId);
     return MessageResponseDto.builder()
         .message("회원 탈퇴가 완료되었습니다.")
