@@ -1,6 +1,7 @@
 package com.cozybinarybase.accountstopthestore.security;
 
 
+import com.cozybinarybase.accountstopthestore.model.member.persist.entity.MemberEntity;
 import com.cozybinarybase.accountstopthestore.model.member.persist.repository.MemberRepository;
 import com.cozybinarybase.accountstopthestore.security.oauth2.CustomOAuth2User;
 import io.jsonwebtoken.Claims;
@@ -9,6 +10,7 @@ import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
 import javax.servlet.http.Cookie;
@@ -16,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -86,6 +89,14 @@ public class TokenProvider {
     return getJwtParser().parseClaimsJws(token).getBody().getSubject();
   }
 
+  public long getRefreshTokenRemainingTime(String refreshToken) {
+    Claims claims = getJwtParser().parseClaimsJws(refreshToken).getBody();
+    Date expiration = claims.getExpiration();
+    Date now = new Date();
+    long remainingTimeMillis = expiration.getTime() - now.getTime();
+    return remainingTimeMillis / 1000;
+  }
+
   public boolean validateToken(String token) {
     try {
       Jws<Claims> claims = getJwtParser().parseClaimsJws(token);
@@ -115,6 +126,28 @@ public class TokenProvider {
     response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
     log.info("Access Token, Refresh Token 쿠키 설정 완료");
+
+    MemberEntity memberEntity = memberRepository.findByRefreshToken(refreshToken)
+        .orElseThrow(() -> new IllegalStateException("Member not found"));
+
+    JSONObject userInfoJson = new JSONObject();
+    userInfoJson.put("id", memberEntity.getId());
+    userInfoJson.put("email", memberEntity.getEmail());
+    userInfoJson.put("name", memberEntity.getName());
+    userInfoJson.put("refreshTokenRemainingTime", getRefreshTokenRemainingTime(refreshToken));
+
+    String userInfoString = Base64.getEncoder().encodeToString(userInfoJson.toString().getBytes());
+
+    ResponseCookie userInfoCookie = ResponseCookie.from("userInfo", userInfoString)
+        .httpOnly(false)
+        .path("/")
+        .sameSite("None")
+        .secure(true)
+        .build();
+
+    response.addHeader("Set-Cookie", userInfoCookie.toString());
+
+    log.info("사용자 정보 쿠키 설정 완료");
   }
 
   public Optional<String> extractToken(HttpServletRequest request, String cookieName) {
