@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
 
   List<MessageEntity> findByGroup(ChallengeGroupEntity challengeGroupEntity);
+
+  void deleteAllBySender(Long memberId);
 }

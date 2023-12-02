@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface ChallengeGroupRepository extends JpaRepository<ChallengeGroupEntity, Long> {
 
   Optional<ChallengeGroupEntity> findByInviteLink(String inviteLink);
+
+  void deleteAllByAdmin(Long memberId);
 }
