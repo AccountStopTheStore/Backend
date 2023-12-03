@@ -57,11 +57,9 @@ public class ChallengeGroupResponseDto {
   public static List<ChallengeGroupResponseDto> setViewer(List<ChallengeGroupResponseDto> challengeGroupResponseDtos, Member member) {
     return challengeGroupResponseDtos.stream()
         .map(challengeGroupResponseDto -> {
-          if (challengeGroupResponseDto.getAdminId().equals(member.getId())) {
             challengeGroupResponseDto.setViewerId(member.getId());
             challengeGroupResponseDto.setViewerName(member.getName());
             challengeGroupResponseDto.setViewerEmail(member.getEmail());
-          }
           return challengeGroupResponseDto;
         })
         .toList();
