@@ -191,6 +191,17 @@ public class AccountBookService {
   }
 
   @Transactional(readOnly = true)
+  public List<AccountBookResponseDto> getAccountBooks(Member member) {
+    List<AccountBookEntity> accountBookEntityList =
+        accountBookRepository.findByMember_Id(member.getId());
+
+    return accountBookEntityList.stream()
+        .map(AccountBookResponseDto::fromEntity)
+        .collect(Collectors.toList());
+  }
+
+
+  @Transactional(readOnly = true)
   public List<AccountBookResponseDto> getMonthlyAccountBooks(
       YearMonth yearMonth, Member member) {
 
