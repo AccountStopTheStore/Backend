@@ -85,18 +85,26 @@ public class AccountBookController {
 
   @GetMapping
   public ResponseEntity<?> getAccountBooks(
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-      @RequestParam TransactionType transactionType,
-      @RequestParam(defaultValue = "0") int page,
-      @RequestParam(defaultValue = "20") int limit,
+      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+      @RequestParam(required = false) TransactionType transactionType,
+      @RequestParam(defaultValue = "0", required = false) Integer page,
+      @RequestParam(defaultValue = "20", required = false) Integer limit,
       @AuthenticationPrincipal Member member) {
-    List<AccountBookResponseDto> accountBookResponseDtoList =
-        accountBookService.getAccountBooks(startDate, endDate, transactionType, page, limit,
-            member);
 
-    return ResponseEntity.ok().body(accountBookResponseDtoList);
+    if (startDate == null && endDate == null && transactionType == null) {
+      // startDate, endDate, transactionType 파라미터가 없는 경우
+      List<AccountBookResponseDto> accountBookResponseDtoList =
+          accountBookService.getAccountBooks(member);
+      return ResponseEntity.ok().body(accountBookResponseDtoList);
+    } else {
+      // 파라미터가 있는 경우 기존 메서드 호출
+      List<AccountBookResponseDto> accountBookResponseDtoList =
+          accountBookService.getAccountBooks(startDate, endDate, transactionType, page, limit, member);
+      return ResponseEntity.ok().body(accountBookResponseDtoList);
+    }
   }
+
 
   @GetMapping("/autocomplete")
   public ResponseEntity<?> autocomplete(
