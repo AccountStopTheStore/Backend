@@ -3,6 +3,7 @@ package com.cozybinarybase.accountstopthestore.security.oauth2;
 import com.cozybinarybase.accountstopthestore.model.member.dto.constants.AuthType;
 import com.cozybinarybase.accountstopthestore.model.member.persist.entity.MemberEntity;
 import com.cozybinarybase.accountstopthestore.model.member.persist.repository.MemberRepository;
+import com.cozybinarybase.accountstopthestore.model.member.service.MemberService;
 import com.cozybinarybase.accountstopthestore.security.TokenProvider;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -19,6 +20,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
   private final TokenProvider tokenProvider;
   private final MemberRepository memberRepository;
+  private final MemberService memberService;
 
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -26,7 +28,13 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
     String email = (String) customOAuth2User.getAttributes().get("email");
     MemberEntity member = memberRepository.findByEmail(email)
-        .orElseGet(() -> memberRepository.save(customOAuth2User.toEntity()));
+        .orElseGet(() -> {
+          MemberEntity newMember = customOAuth2User.toEntity();
+          newMember = memberRepository.save(newMember);
+          memberService.addDefaultCategories(newMember);
+          return newMember;
+        });
+
 
     if (member.getAuthType() == AuthType.EMAIL) {
       response.setContentType("application/json");

@@ -108,6 +108,12 @@ public class MemberService implements UserDetailsService {
     member.passwordEncode(this.passwordEncoder);
     MemberEntity memberEntity = this.memberRepository.save(member.toEntity());
 
+    addDefaultCategories(memberEntity);
+
+    return EmailSignUpResponseDto.fromEntity(memberEntity);
+  }
+
+  public void addDefaultCategories(MemberEntity memberEntity) {
     List<CategoryEntity> categories = Arrays.stream(categoryNames)
         .map(categoryName -> CategoryEntity.builder()
             .member(memberEntity)
@@ -117,8 +123,6 @@ public class MemberService implements UserDetailsService {
         .collect(Collectors.toList());
 
     categoryRepository.saveAll(categories);
-
-    return EmailSignUpResponseDto.fromEntity(memberEntity);
   }
 
   public void signInWithEmail(EmailSignInRequestDto emailSignInRequestDto) {
