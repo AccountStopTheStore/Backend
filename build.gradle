@@ -3,6 +3,7 @@ plugins {
 	id 'org.springframework.boot' version '2.7.17'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 	id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
+	id 'jacoco'
 }
 
 group = 'com.example'
@@ -10,6 +11,17 @@ version = '0.0.1-SNAPSHOT'
 
 java {
     sourceCompatibility = "16"
+}
+
+jacoco {
+	toolVersion = "0.8.7"
+}
+
+jacocoTestReport {
+	reports {
+		xml.required = true
+		html.required = true
+	}
 }
 
 configurations {
