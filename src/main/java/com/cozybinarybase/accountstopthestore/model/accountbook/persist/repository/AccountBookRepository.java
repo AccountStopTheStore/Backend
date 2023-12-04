@@ -67,4 +67,6 @@ public interface AccountBookRepository extends JpaRepository<AccountBookEntity, 
       LocalDateTime endDateTime,
       Long memberId
   );
+
+  List<AccountBookEntity> findByMember_Id(Long id);
 }

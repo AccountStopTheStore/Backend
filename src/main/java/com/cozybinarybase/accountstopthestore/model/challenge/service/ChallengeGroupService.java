@@ -86,7 +86,7 @@ public class ChallengeGroupService {
 
     Message enterMessage = Message.createEnterMessage(challengeGroup, member);
 
-    messageService.saveAndSend(enterMessage);
+    messageService.saveAndSend(enterMessage, member);
 
     MemberGroup memberGroup = MemberGroup.create(challengeGroup, member);
     memberGroupRepository.save(memberGroup.toEntity());
@@ -113,7 +113,7 @@ public class ChallengeGroupService {
     }
 
     Message leaveMessage = Message.createLeaveMessage(challengeGroup, member);
-    messageService.saveAndSend(leaveMessage);
+    messageService.saveAndSend(leaveMessage, member);
   }
 
   public boolean isChallengeGroupMember(ChallengeGroup challengeGroup, Member member) {
@@ -136,7 +136,12 @@ public class ChallengeGroupService {
         .map(MemberGroupEntity::getChallengeGroup)
         .toList();
 
-    return ChallengeGroupResponseDto.fromEntities(challengeGroupEntities);
+    List<ChallengeGroupResponseDto> challengeGroups = ChallengeGroupResponseDto.setViewer(
+        ChallengeGroupResponseDto.fromEntities(challengeGroupEntities),
+        member
+    );
+
+    return challengeGroups;
   }
 
   public ChallengeGroupResponseDto updateChallengeGroup(Long groupId, ChallengeGroupRequestDto challengeGroupRequestDto,
