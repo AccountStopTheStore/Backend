@@ -1,5 +1,6 @@
 package com.cozybinarybase.accountstopthestore.model.message.persist.repository;
 
+import com.cozybinarybase.accountstopthestore.model.challenge.domain.ChallengeGroup;
 import com.cozybinarybase.accountstopthestore.model.challenge.persist.entity.ChallengeGroupEntity;
 import com.cozybinarybase.accountstopthestore.model.message.persist.entity.MessageEntity;
 import java.util.List;
@@ -12,4 +13,6 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
   List<MessageEntity> findByGroup(ChallengeGroupEntity challengeGroupEntity);
 
   void deleteAllBySender(Long memberId);
+
+  void deleteAllByGroup(ChallengeGroupEntity challengeGroupEntity);
 }
