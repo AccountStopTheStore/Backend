@@ -40,8 +40,9 @@ public class AddressService {
 
     if (!addressInfoJson.getJSONArray("documents").isEmpty()) {
       JSONObject documentObject = addressInfoJson.getJSONArray("documents").getJSONObject(0);
-      coordinates.put("x", documentObject.getString("x"));
-      coordinates.put("y", documentObject.getString("y"));
+      JSONObject roadAddressObject = documentObject.getJSONObject("road_address");
+      coordinates.put("x", roadAddressObject.getString("x"));
+      coordinates.put("y", roadAddressObject.getString("y"));
     }
 
     return coordinates;
