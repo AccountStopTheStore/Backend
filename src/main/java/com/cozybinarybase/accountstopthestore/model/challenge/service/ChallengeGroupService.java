@@ -168,6 +168,7 @@ public class ChallengeGroupService {
       throw new IllegalArgumentException("그룹장이 삭제 할 수 있습니다.");
     }
 
+    memberGroupRepository.deleteByChallengeGroupId(groupId);
     challengeGroupRepository.delete(challengeGroup.toEntity());
     return groupId;
   }

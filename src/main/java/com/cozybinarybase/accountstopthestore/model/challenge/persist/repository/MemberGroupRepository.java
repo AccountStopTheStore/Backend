@@ -23,4 +23,6 @@ public interface MemberGroupRepository extends JpaRepository<MemberGroupEntity, 
   Long countByChallengeGroup(ChallengeGroupEntity entity);
 
   void deleteAllByMemberId(Long memberId);
+
+  void deleteByChallengeGroupId(Long groupId);
 }
