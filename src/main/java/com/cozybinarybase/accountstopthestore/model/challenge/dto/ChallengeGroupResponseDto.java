@@ -1,9 +1,11 @@
 package com.cozybinarybase.accountstopthestore.model.challenge.dto;
 
 import com.cozybinarybase.accountstopthestore.model.challenge.persist.entity.ChallengeGroupEntity;
+import com.cozybinarybase.accountstopthestore.model.challenge.persist.entity.MemberGroupEntity;
 import com.cozybinarybase.accountstopthestore.model.member.domain.Member;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,9 +25,13 @@ public class ChallengeGroupResponseDto {
 
   private Long maxMembers;
 
+  private int currentMembers;
+
   private LocalDate startAt;
 
   private LocalDate endAt;
+
+  private String inviteLink;
 
   private Long adminId;
 
@@ -34,6 +40,8 @@ public class ChallengeGroupResponseDto {
   private String viewerName;
 
   private String viewerEmail;
+
+  private List<GroupMemberDto> groupMembers;
 
   public static ChallengeGroupResponseDto fromEntity(ChallengeGroupEntity challengeGroupEntity) {
     return ChallengeGroupResponseDto.builder()
@@ -44,8 +52,29 @@ public class ChallengeGroupResponseDto {
         .maxMembers(challengeGroupEntity.getMaxMembers())
         .startAt(challengeGroupEntity.getStartAt())
         .endAt(challengeGroupEntity.getEndAt())
+        .inviteLink(challengeGroupEntity.getInviteLink())
         .adminId(challengeGroupEntity.getAdmin().getId())
         .build();
+  }
+
+  public static ChallengeGroupResponseDto fromEntity(ChallengeGroupEntity challengeGroupEntity, List<MemberGroupEntity> memberGroupEntities) {
+    ChallengeGroupResponseDto dto = ChallengeGroupResponseDto.builder()
+        .id(challengeGroupEntity.getId())
+        .name(challengeGroupEntity.getName())
+        .description(challengeGroupEntity.getDescription())
+        .targetAmount(challengeGroupEntity.getTargetAmount())
+        .maxMembers(challengeGroupEntity.getMaxMembers())
+        .startAt(challengeGroupEntity.getStartAt())
+        .endAt(challengeGroupEntity.getEndAt())
+        .inviteLink(challengeGroupEntity.getInviteLink())
+        .adminId(challengeGroupEntity.getAdmin().getId())
+        .currentMembers(memberGroupEntities.size())
+        .groupMembers(memberGroupEntities.stream()
+            .map(GroupMemberDto::fromEntity)
+            .collect(Collectors.toList()))
+        .build();
+
+    return dto;
   }
 
   public static List<ChallengeGroupResponseDto> fromEntities(List<ChallengeGroupEntity> challengeGroupEntities) {
@@ -63,5 +92,18 @@ public class ChallengeGroupResponseDto {
           return challengeGroupResponseDto;
         })
         .toList();
+  }
+
+  @Data
+  public static class GroupMemberDto {
+    private Long memberId;
+    private Long totalSavingAmount;
+
+    public static GroupMemberDto fromEntity(MemberGroupEntity memberGroupEntity) {
+      GroupMemberDto dto = new GroupMemberDto();
+      dto.setMemberId(memberGroupEntity.getMember().getId());
+      dto.setTotalSavingAmount(memberGroupEntity.getSavedAmount());
+      return dto;
+    }
   }
 }
