@@ -21,6 +21,7 @@ import com.cozybinarybase.accountstopthestore.model.message.persist.entity.Messa
 import com.cozybinarybase.accountstopthestore.model.message.persist.repository.MessageRepository;
 import com.cozybinarybase.accountstopthestore.model.message.service.MessageService;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -135,14 +136,21 @@ public class ChallengeGroupService {
     List<ChallengeGroupEntity> challengeGroupEntities = memberGroupRepository.findByMember(member.toEntity())
         .stream()
         .map(MemberGroupEntity::getChallengeGroup)
-        .toList();
+        .distinct()
+        .collect(Collectors.toList());
 
-    List<ChallengeGroupResponseDto> challengeGroups = ChallengeGroupResponseDto.setViewer(
-        ChallengeGroupResponseDto.fromEntities(challengeGroupEntities),
-        member
-    );
-
-    return challengeGroups;
+    return challengeGroupEntities.stream()
+        .map(challengeGroup -> {
+          List<MemberGroupEntity> memberGroupEntities = memberGroupRepository.findByChallengeGroup(challengeGroup);
+          return ChallengeGroupResponseDto.fromEntity(challengeGroup, memberGroupEntities);
+        })
+        .map(challengeGroupResponseDto -> {
+          challengeGroupResponseDto.setViewerId(member.getId());
+          challengeGroupResponseDto.setViewerName(member.getName());
+          challengeGroupResponseDto.setViewerEmail(member.getEmail());
+          return challengeGroupResponseDto;
+        })
+        .collect(Collectors.toList());
   }
 
   public ChallengeGroupResponseDto updateChallengeGroup(Long groupId, ChallengeGroupRequestDto challengeGroupRequestDto,
