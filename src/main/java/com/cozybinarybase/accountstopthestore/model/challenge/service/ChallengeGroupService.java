@@ -21,6 +21,7 @@ import com.cozybinarybase.accountstopthestore.model.message.persist.entity.Messa
 import com.cozybinarybase.accountstopthestore.model.message.persist.repository.MessageRepository;
 import com.cozybinarybase.accountstopthestore.model.message.service.MessageService;
 import java.util.List;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -159,6 +160,7 @@ public class ChallengeGroupService {
   }
 
   //TODO: 그룹 삭제시 MemberGroup이 기록은 남아있되 사용은 못하도록 하기
+  @Transactional
   public Long deleteChallengeGroup(Long groupId, Member member) {
     ChallengeGroup challengeGroup = challengeGroupRepository.findById(groupId)
         .map(ChallengeGroup::fromEntity)
@@ -168,7 +170,11 @@ public class ChallengeGroupService {
       throw new IllegalArgumentException("그룹장이 삭제 할 수 있습니다.");
     }
 
-    challengeGroupRepository.delete(challengeGroup.toEntity());
+    ChallengeGroupEntity challengeGroupEntity = challengeGroup.toEntity();
+
+    messageRepository.deleteAllByGroup(challengeGroupEntity);
+    memberGroupRepository.deleteByChallengeGroup(challengeGroupEntity);
+    challengeGroupRepository.delete(challengeGroupEntity);
     return groupId;
   }
 
