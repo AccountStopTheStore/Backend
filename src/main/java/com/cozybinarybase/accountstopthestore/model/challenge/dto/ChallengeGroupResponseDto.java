@@ -97,11 +97,15 @@ public class ChallengeGroupResponseDto {
   @Data
   public static class GroupMemberDto {
     private Long memberId;
+    private String memberEmail;
+    private String memberName;
     private Long totalSavingAmount;
 
     public static GroupMemberDto fromEntity(MemberGroupEntity memberGroupEntity) {
       GroupMemberDto dto = new GroupMemberDto();
       dto.setMemberId(memberGroupEntity.getMember().getId());
+      dto.setMemberEmail(memberGroupEntity.getMember().getEmail());
+      dto.setMemberName(memberGroupEntity.getMember().getName());
       dto.setTotalSavingAmount(memberGroupEntity.getSavedAmount());
       return dto;
     }
