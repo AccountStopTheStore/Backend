@@ -11,6 +11,7 @@ import com.cozybinarybase.accountstopthestore.model.asset.dto.AssetSaveRequestDt
 import com.cozybinarybase.accountstopthestore.model.asset.dto.AssetSaveResponseDto;
 import com.cozybinarybase.accountstopthestore.model.asset.dto.AssetUpdateRequestDto;
 import com.cozybinarybase.accountstopthestore.model.asset.dto.AssetUpdateResponseDto;
+import com.cozybinarybase.accountstopthestore.model.asset.dto.constants.AssetGroup;
 import com.cozybinarybase.accountstopthestore.model.asset.dto.constants.AssetType;
 import com.cozybinarybase.accountstopthestore.model.asset.persist.entity.AssetEntity;
 import com.cozybinarybase.accountstopthestore.model.asset.persist.repository.AssetRepository;
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -47,7 +49,7 @@ class AssetServiceTest {
   void 자산_추가_test() throws Exception {
     // given
     AssetSaveRequestDto requestDto = new AssetSaveRequestDto();
-    requestDto.setAssetType(AssetType.CARD);
+    requestDto.setAssetGroup(AssetGroup.CARD);
     requestDto.setAssetName("우리카드");
     requestDto.setAmount(100000L);
     requestDto.setStatementDay(10);
@@ -64,7 +66,8 @@ class AssetServiceTest {
 
     AssetEntity savedAsset = AssetEntity.builder()
         .id(1L)
-        .type(AssetType.CARD)
+        .group(AssetGroup.CARD)
+        .type(AssetType.WOORI_CARD)
         .name("우리카드")
         .amount(100000L)
         .statementDay(10)
@@ -73,7 +76,8 @@ class AssetServiceTest {
         .build();
 
     Asset assetDomain = Asset.builder()
-        .type(AssetType.CARD)
+        .group(AssetGroup.CARD)
+        .type(AssetType.WOORI_CARD)
         .name("우리카드")
         .amount(100000L)
         .statementDay(10)
@@ -109,7 +113,8 @@ class AssetServiceTest {
   void 자산_수정_test() throws Exception {
     // given
     AssetUpdateRequestDto requestDto = new AssetUpdateRequestDto();
-    requestDto.setAssetType(AssetType.CARD);
+    requestDto.setAssetGroup(AssetGroup.CARD);
+    requestDto.setAssetType(AssetType.WOORI_CARD);
     requestDto.setAssetName("우리카드");
     requestDto.setAmount(100000L);
     requestDto.setStatementDay(10);
@@ -128,7 +133,7 @@ class AssetServiceTest {
 
     AssetEntity savedAsset = AssetEntity.builder()
         .id(1L)
-        .type(AssetType.MONEY)
+        .group(AssetGroup.MONEY)
         .name("월급")
         .amount(200000L)
         .statementDay(1)
@@ -176,7 +181,7 @@ class AssetServiceTest {
 
     AssetEntity savedAsset = AssetEntity.builder()
         .id(1L)
-        .type(AssetType.MONEY)
+        .group(AssetGroup.MONEY)
         .name("월급")
         .amount(200000L)
         .statementDay(1)
@@ -213,7 +218,8 @@ class AssetServiceTest {
 
     assetEntityList.add(AssetEntity.builder()
         .id(1L)
-        .type(AssetType.CARD)
+        .group(AssetGroup.CARD)
+        .type(AssetType.WOORI_CARD)
         .name("우리카드")
         .amount(100000L)
         .statementDay(10)
@@ -223,7 +229,7 @@ class AssetServiceTest {
 
     assetEntityList.add(AssetEntity.builder()
         .id(1L)
-        .type(AssetType.MONEY)
+        .group(AssetGroup.MONEY)
         .name("적금")
         .amount(200000L)
         .statementDay(1)

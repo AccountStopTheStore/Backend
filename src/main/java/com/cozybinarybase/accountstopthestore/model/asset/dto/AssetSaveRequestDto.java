@@ -1,5 +1,6 @@
 package com.cozybinarybase.accountstopthestore.model.asset.dto;
 
+import com.cozybinarybase.accountstopthestore.model.asset.dto.constants.AssetGroup;
 import com.cozybinarybase.accountstopthestore.model.asset.dto.constants.AssetType;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -10,6 +11,9 @@ import lombok.Setter;
 @Setter
 @Getter
 public class AssetSaveRequestDto {
+
+  @NotNull(message = "자산 그룹을 입력해주시길 바랍니다.")
+  private AssetGroup assetGroup;
 
   @NotNull(message = "자산 유형을 입력해주시길 바랍니다.")
   private AssetType assetType;

@@ -20,7 +20,9 @@ public class AccountBookResponseDto {
 
   private Long accountId;
   private String categoryName;
+  private String assetGroup;
   private String assetType;
+  private String assetName;
   private Long amount;
   private String transactionType;
   private String transactionDetail;
@@ -52,7 +54,9 @@ public class AccountBookResponseDto {
     return AccountBookResponseDto.builder()
         .accountId(accountBookEntity.getId())
         .categoryName(accountBookEntity.getCategory().getName())
-        .assetType(accountBookEntity.getAsset().getName())
+        .assetGroup(accountBookEntity.getAsset().getGroup().getValue())
+        .assetType(accountBookEntity.getAsset().getType().getValue())
+        .assetName(accountBookEntity.getAsset().getName())
         .amount(accountBookEntity.getAmount())
         .transactionType(accountBookEntity.getTransactionType().getValue())
         .transactionDetail(accountBookEntity.getTransactionDetail())

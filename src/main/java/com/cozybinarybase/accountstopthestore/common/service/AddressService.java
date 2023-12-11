@@ -40,6 +40,8 @@ public class AddressService {
 
     if (!addressInfoJson.getJSONArray("documents").isEmpty()) {
       JSONObject documentObject = addressInfoJson.getJSONArray("documents").getJSONObject(0);
+      // road_address가 존재하지 않을 경우 예외처리
+      // 커스텀 예외 작성 후 전역 예외 핸들러에서 처리
       JSONObject roadAddressObject = documentObject.getJSONObject("road_address");
       coordinates.put("x", roadAddressObject.getString("x"));
       coordinates.put("y", roadAddressObject.getString("y"));

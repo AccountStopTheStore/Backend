@@ -1,5 +1,6 @@
 package com.cozybinarybase.accountstopthestore.model.asset.dto;
 
+import com.cozybinarybase.accountstopthestore.model.asset.dto.constants.AssetGroup;
 import com.cozybinarybase.accountstopthestore.model.asset.dto.constants.AssetType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
@@ -13,6 +14,7 @@ import lombok.Setter;
 @Getter
 public class AssetUpdateRequestDto {
 
+  private AssetGroup assetGroup;
   private AssetType assetType;
 
   @NotBlank(message = "자산명을 입력해주시길 바랍니다.")

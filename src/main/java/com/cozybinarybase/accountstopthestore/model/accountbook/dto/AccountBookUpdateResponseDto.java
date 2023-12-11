@@ -11,15 +11,19 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
+@Setter
 public class AccountBookUpdateResponseDto {
 
   private Long accountId;
   private String categoryName;
+  private String assetGroup;
+  private String assetType;
   private String assetName;
   private Long amount;
   private String transactionType;
@@ -50,6 +54,7 @@ public class AccountBookUpdateResponseDto {
         .transactionType(accountBookEntity.getTransactionType().getValue())
         .transactionDetail(accountBookEntity.getTransactionDetail())
         .transactedAt(accountBookEntity.getTransactedAt())
+        .address(accountBookEntity.getAddress())
         .memo(accountBookEntity.getMemo())
         .imageIds(imageIdList)
         .isInstallment(accountBookEntity.getIsInstallment())
