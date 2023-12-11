@@ -101,8 +101,12 @@ public class AccountBookService {
     // AccountBookEntity 저장
     accountBookEntity = accountBookRepository.save(accountBookEntity);
 
+    AccountBookSaveResponseDto responseDto = AccountBookSaveResponseDto.fromEntity(accountBookEntity);
+    responseDto.setAssetGroup(assetEntity.getGroup().getValue());
+    responseDto.setAssetType(assetEntity.getType().getValue());
+
     // DTO 변환 및 반환
-    return AccountBookSaveResponseDto.fromEntity(accountBookEntity);
+    return responseDto;
   }
 
   @Transactional
@@ -129,11 +133,12 @@ public class AccountBookService {
     AccountBook accountBookDomain = AccountBook.fromEntity(accountBookEntity);
     accountBookDomain.updateAccountBook(requestDto, categoryEntity.getId(), assetEntity.getId(), images);
 
+    accountBookEntity = accountBookDomain.toEntity();
 
-    images.forEach(image -> {
-      image.setAccountBook(accountBookEntity);
-      imageRepository.save(image);
-    });
+    for (ImageEntity img : images) {
+      img.setAccountBook(accountBookEntity);
+      imageRepository.save(img);
+    }
 
     accountBookEntity.setImages(images);
 
@@ -152,7 +157,11 @@ public class AccountBookService {
 
     AccountBookEntity updatedAccountBookEntity = accountBookRepository.save(accountBookEntity);
 
-    return AccountBookUpdateResponseDto.fromEntity(updatedAccountBookEntity);
+    AccountBookUpdateResponseDto responseDto = AccountBookUpdateResponseDto.fromEntity(updatedAccountBookEntity);
+    responseDto.setAssetGroup(assetEntity.getGroup().getValue());
+    responseDto.setAssetType(assetEntity.getType().getValue());
+
+    return responseDto;
   }
 
   @Transactional

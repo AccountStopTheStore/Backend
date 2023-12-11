@@ -2,6 +2,7 @@ package com.cozybinarybase.accountstopthestore.model.asset.domain;
 
 import com.cozybinarybase.accountstopthestore.model.asset.dto.AssetSaveRequestDto;
 import com.cozybinarybase.accountstopthestore.model.asset.dto.AssetUpdateRequestDto;
+import com.cozybinarybase.accountstopthestore.model.asset.dto.constants.AssetGroup;
 import com.cozybinarybase.accountstopthestore.model.asset.dto.constants.AssetType;
 import com.cozybinarybase.accountstopthestore.model.asset.persist.entity.AssetEntity;
 import com.cozybinarybase.accountstopthestore.model.member.persist.entity.MemberEntity;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Component;
 public class Asset {
 
   private Long id;
+  private AssetGroup group;
   private AssetType type;
   private String name;
   private Long amount;
@@ -33,6 +35,7 @@ public class Asset {
   public Asset createAsset(AssetSaveRequestDto requestDto, Long memberId) {
 
     return Asset.builder()
+        .group(requestDto.getAssetGroup())
         .type(requestDto.getAssetType())
         .name(requestDto.getAssetName())
         .amount(requestDto.getAmount())
@@ -44,6 +47,9 @@ public class Asset {
   }
 
   public void update(AssetUpdateRequestDto requestDto) {
+    if (requestDto.getAssetGroup() != null) {
+      this.group = requestDto.getAssetGroup();
+    }
     if (requestDto.getAssetType() != null) {
       this.type = requestDto.getAssetType();
     }
@@ -73,6 +79,7 @@ public class Asset {
   public AssetEntity toEntity() {
     return AssetEntity.builder()
         .id(this.id)
+        .group(this.group)
         .type(this.type)
         .name(this.name)
         .amount(this.amount)
@@ -88,6 +95,7 @@ public class Asset {
   public static Asset fromEntity(AssetEntity assetEntity) {
     return Asset.builder()
         .id(assetEntity.getId())
+        .group(assetEntity.getGroup())
         .type(assetEntity.getType())
         .name(assetEntity.getName())
         .amount(assetEntity.getAmount())

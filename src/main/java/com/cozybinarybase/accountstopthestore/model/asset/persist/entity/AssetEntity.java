@@ -1,5 +1,6 @@
 package com.cozybinarybase.accountstopthestore.model.asset.persist.entity;
 
+import com.cozybinarybase.accountstopthestore.model.asset.dto.constants.AssetGroup;
 import com.cozybinarybase.accountstopthestore.model.asset.dto.constants.AssetType;
 import com.cozybinarybase.accountstopthestore.model.member.persist.entity.MemberEntity;
 import java.time.LocalDateTime;
@@ -37,6 +38,10 @@ public class AssetEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
+  @Column(name = "assetGroup")
+  @Enumerated(EnumType.STRING)
+  private AssetGroup group;
 
   @Column(name = "assetType")
   @Enumerated(EnumType.STRING)

@@ -1,5 +1,6 @@
 package com.cozybinarybase.accountstopthestore.model.asset.dto;
 
+import com.cozybinarybase.accountstopthestore.model.asset.dto.constants.AssetGroup;
 import com.cozybinarybase.accountstopthestore.model.asset.persist.entity.AssetEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 public class AssetResponseDto {
 
   private Long assetId;
+  private String assetGroup;
   private String assetType;
   private String assetName;
   private Long amount;
@@ -32,6 +34,7 @@ public class AssetResponseDto {
   public static AssetResponseDto fromEntity(AssetEntity assetEntity) {
     return AssetResponseDto.builder()
         .assetId(assetEntity.getId())
+        .assetGroup(assetEntity.getGroup().getValue())
         .assetType(assetEntity.getType().getValue())
         .assetName(assetEntity.getName())
         .amount(assetEntity.getAmount())

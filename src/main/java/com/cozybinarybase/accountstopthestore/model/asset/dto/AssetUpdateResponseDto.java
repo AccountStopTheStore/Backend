@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class AssetUpdateResponseDto {
 
+  private String assetGroup;
   private String assetType;
   private String assetName;
   private Long amount;
@@ -31,6 +32,7 @@ public class AssetUpdateResponseDto {
 
   public static AssetUpdateResponseDto fromEntity(AssetEntity assetEntity) {
     return AssetUpdateResponseDto.builder()
+        .assetGroup(assetEntity.getGroup().getValue())
         .assetType(assetEntity.getType().getValue())
         .assetName(assetEntity.getName())
         .amount(assetEntity.getAmount())
