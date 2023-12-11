@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum AssetType {
 
+  CASH("현금"),
   KB_KOOKMIN_BANK("국민은행"),
   SHINHAN_BANK("신한은행"),
   WOORI_BANK("우리은행"),
