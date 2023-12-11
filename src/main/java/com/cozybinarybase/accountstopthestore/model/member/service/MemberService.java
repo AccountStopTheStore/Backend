@@ -32,6 +32,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -69,7 +70,11 @@ public class MemberService implements UserDetailsService {
   @Value("${spring.profiles.active}")
   private String activeProfile;
 
-  private final static String[] categoryNames = {
+  private final static String[] incomeCategoryNames = {
+      "월급", "부수입", "용돈", "상여", "금융소득"
+  };
+
+  private final static String[] spendingCategoryNames = {
       "가전/가구", "가전생활/서비스", "교육/학원", "미용",
       "스포츠/문화/레저", "여행/교통", "요식/유흥", "유통",
       "음/식료품", "의료", "의류/잡화", "자동차",
@@ -114,13 +119,20 @@ public class MemberService implements UserDetailsService {
   }
 
   public void addDefaultCategories(MemberEntity memberEntity) {
-    List<CategoryEntity> categories = Arrays.stream(categoryNames)
-        .map(categoryName -> CategoryEntity.builder()
-            .member(memberEntity)
-            .name(categoryName)
-            .type(CategoryType.SPENDING)
-            .build())
-        .collect(Collectors.toList());
+    List<CategoryEntity> categories = Stream.concat(
+        Arrays.stream(incomeCategoryNames).map(categoryName ->
+            CategoryEntity.builder()
+                .member(memberEntity)
+                .name(categoryName)
+                .type(CategoryType.INCOME) // INCOME으로 설정
+                .build()),
+        Arrays.stream(spendingCategoryNames).map(categoryName ->
+            CategoryEntity.builder()
+                .member(memberEntity)
+                .name(categoryName)
+                .type(CategoryType.SPENDING) // SPENDING으로 설정
+                .build())
+    ).collect(Collectors.toList());
 
     categoryRepository.saveAll(categories);
   }
