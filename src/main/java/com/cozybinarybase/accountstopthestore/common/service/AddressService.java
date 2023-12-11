@@ -40,11 +40,15 @@ public class AddressService {
 
     if (!addressInfoJson.getJSONArray("documents").isEmpty()) {
       JSONObject documentObject = addressInfoJson.getJSONArray("documents").getJSONObject(0);
-      // road_address가 존재하지 않을 경우 예외처리
-      // 커스텀 예외 작성 후 전역 예외 핸들러에서 처리
-      JSONObject roadAddressObject = documentObject.getJSONObject("road_address");
-      coordinates.put("x", roadAddressObject.getString("x"));
-      coordinates.put("y", roadAddressObject.getString("y"));
+
+      // optJSONObject를 사용하여 "road_address"가 없는 경우 null을 반환
+      JSONObject roadAddressObject = documentObject.optJSONObject("road_address");
+
+      // roadAddressObject가 null이 아닐 때만 x, y 좌표를 설정
+      if (roadAddressObject != null) {
+        coordinates.put("x", roadAddressObject.getString("x"));
+        coordinates.put("y", roadAddressObject.getString("y"));
+      }
     }
 
     return coordinates;
