@@ -32,6 +32,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
           MemberEntity newMember = customOAuth2User.toEntity();
           newMember = memberRepository.save(newMember);
           memberService.addDefaultCategories(newMember);
+          memberService.addDefaultAssets(newMember);
           return newMember;
         });
 

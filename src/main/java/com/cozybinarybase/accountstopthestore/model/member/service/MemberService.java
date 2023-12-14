@@ -4,6 +4,9 @@ import com.cozybinarybase.accountstopthestore.common.SimpleEmailService;
 import com.cozybinarybase.accountstopthestore.common.dto.MessageResponseDto;
 import com.cozybinarybase.accountstopthestore.common.handler.exception.MemberNotValidException;
 import com.cozybinarybase.accountstopthestore.model.accountbook.persist.repository.AccountBookRepository;
+import com.cozybinarybase.accountstopthestore.model.asset.dto.constants.AssetGroup;
+import com.cozybinarybase.accountstopthestore.model.asset.dto.constants.AssetType;
+import com.cozybinarybase.accountstopthestore.model.asset.persist.entity.AssetEntity;
 import com.cozybinarybase.accountstopthestore.model.asset.persist.repository.AssetRepository;
 import com.cozybinarybase.accountstopthestore.model.category.dto.constants.CategoryType;
 import com.cozybinarybase.accountstopthestore.model.category.persist.entity.CategoryEntity;
@@ -26,6 +29,7 @@ import com.cozybinarybase.accountstopthestore.model.member.persist.repository.Ve
 import com.cozybinarybase.accountstopthestore.model.member.service.util.MemberUtil;
 import com.cozybinarybase.accountstopthestore.model.message.persist.repository.MessageRepository;
 import com.cozybinarybase.accountstopthestore.security.TokenProvider;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -114,6 +118,7 @@ public class MemberService implements UserDetailsService {
     MemberEntity memberEntity = this.memberRepository.save(member.toEntity());
 
     addDefaultCategories(memberEntity);
+    addDefaultAssets(memberEntity);
 
     return EmailSignUpResponseDto.fromEntity(memberEntity);
   }
@@ -135,6 +140,49 @@ public class MemberService implements UserDetailsService {
     ).collect(Collectors.toList());
 
     categoryRepository.saveAll(categories);
+  }
+
+  @Transactional
+  public void addDefaultAssets(MemberEntity member) {
+    List<AssetEntity> assets = createDefaultAssets(member);
+    assetRepository.saveAll(assets);
+  }
+
+  private List<AssetEntity> createDefaultAssets(MemberEntity member) {
+    return Arrays.stream(AssetType.values())
+        .map(assetType -> createAssetEntity(assetType, member))
+        .collect(Collectors.toList());
+  }
+
+  private AssetEntity createAssetEntity(AssetType assetType, MemberEntity member) {
+    AssetEntity asset = new AssetEntity();
+    asset.setGroup(determineAssetGroup(assetType));
+    asset.setType(assetType);
+    asset.setName(assetType.toValue());
+    asset.setAmount(0L);
+    asset.setMember(member);
+
+    // 카드 타입의 경우 statementDay와 dueDay 설정
+    if (isCardType(assetType)) {
+      asset.setStatementDay(15);
+      asset.setDueDay(30);
+    }
+
+    return asset;
+  }
+
+  private boolean isCardType(AssetType type) {
+    return type.toString().contains("_CARD");
+  }
+
+  private AssetGroup determineAssetGroup(AssetType assetType) {
+    if (isCardType(assetType)) {
+      return AssetGroup.CARD;
+    } else if (assetType == AssetType.MONEY) {
+      return AssetGroup.MONEY;
+    } else {
+      return AssetGroup.BANK;
+    }
   }
 
   public void signInWithEmail(EmailSignInRequestDto emailSignInRequestDto) {
