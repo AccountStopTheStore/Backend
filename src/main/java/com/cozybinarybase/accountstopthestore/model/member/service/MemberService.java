@@ -164,8 +164,8 @@ public class MemberService implements UserDetailsService {
 
     // 카드 타입의 경우 statementDay와 dueDay 설정
     if (isCardType(assetType)) {
-      asset.setStatementDay(15);
-      asset.setDueDay(30);
+      asset.setStatementDay(1);
+      asset.setDueDay(14);
     }
 
     return asset;
