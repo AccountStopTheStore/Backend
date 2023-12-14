@@ -5,6 +5,7 @@ import com.cozybinarybase.accountstopthestore.security.oauth2.OAuth2LoginSuccess
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -36,6 +37,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         .and()
         .authorizeRequests()
+        .antMatchers(HttpMethod.OPTIONS, "/**/*").permitAll()
         .antMatchers("/auth/sign-up/**", "/auth/sign-in/**").permitAll()
         .antMatchers("/auth/email-verifications/**", "/auth/reset-password/**").permitAll()
         .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll()
