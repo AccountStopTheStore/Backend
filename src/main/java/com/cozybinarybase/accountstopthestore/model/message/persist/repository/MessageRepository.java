@@ -12,7 +12,7 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
 
   List<MessageEntity> findByGroup(ChallengeGroupEntity challengeGroupEntity);
 
-  void deleteAllBySender(Long memberId);
+  void deleteAllBySender_Id(Long memberId);
 
   void deleteAllByGroup(ChallengeGroupEntity challengeGroupEntity);
 }
