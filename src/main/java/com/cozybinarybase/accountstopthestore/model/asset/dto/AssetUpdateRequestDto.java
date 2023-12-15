@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,7 +21,7 @@ public class AssetUpdateRequestDto {
   @NotBlank(message = "자산명을 입력해주시길 바랍니다.")
   private String assetName;
 
-  @Positive(message = "양수의 값만 입력할 수 있습니다.")
+  @PositiveOrZero(message = "음수는 입력할 수 없습니다.")
   private Long amount;
 
   @Positive(message = "양수의 값만 입력할 수 있습니다.")

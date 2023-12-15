@@ -80,6 +80,15 @@ public class AccountBookService {
         requestDto, categoryEntity.getId(), assetEntity.getId(), member.getId(),
         categoryEntity.getName(), assetEntity.getName(), images).toEntity();
 
+    Long transactionAmount = requestDto.getAmount(); // 가계부 금액
+    if (accountBookEntity.getTransactionType().equals(TransactionType.INCOME)) {
+      assetEntity.setAmount(assetEntity.getAmount() + transactionAmount);
+    } else if (accountBookEntity.getTransactionType().equals(TransactionType.SPENDING)) {
+      assetEntity.setAmount(assetEntity.getAmount() - transactionAmount);
+    }
+
+    assetRepository.save(assetEntity);
+
     AccountBookEntity finalAccountBookEntity = accountBookEntity;
     images.forEach(image -> image.setAccountBook(finalAccountBookEntity));
 
@@ -113,6 +122,22 @@ public class AccountBookService {
   public AccountBookUpdateResponseDto updateAccountBook(Long accountId,
       AccountBookUpdateRequestDto requestDto, Member member) {
     memberService.validateAndGetMember(member);
+
+    // 원래 가계부 정보 가져오기
+    AccountBookEntity originalAccountBookEntity = accountBookRepository.findByIdAndMember_Id(accountId, member.getId())
+        .orElseThrow(AccountBookNotValidException::new);
+    AssetEntity originalAssetEntity = originalAccountBookEntity.getAsset();
+
+    // 원래의 자산 정보 저장
+    Long originalAmount = originalAccountBookEntity.getAmount();
+    TransactionType originalType = originalAccountBookEntity.getTransactionType();
+
+    // 기존 자산에서 원래 가계부 금액 조정
+    if (originalType.equals(TransactionType.INCOME)) {
+      originalAssetEntity.setAmount(originalAssetEntity.getAmount() - originalAmount);
+    } else if (originalType.equals(TransactionType.SPENDING)) {
+      originalAssetEntity.setAmount(originalAssetEntity.getAmount() + originalAmount);
+    }
 
     AccountBookEntity accountBookEntity = accountBookRepository.findByIdAndMember_Id(accountId, member.getId())
         .orElseThrow(AccountBookNotValidException::new);
@@ -154,6 +179,17 @@ public class AccountBookService {
       accountBookEntity.setLatitude(null);
       accountBookEntity.setLongitude(null);
     }
+
+    Long newAmount = requestDto.getAmount();
+    TransactionType newType = requestDto.getTransactionType();
+
+    if (newType.equals(TransactionType.INCOME)) {
+      originalAssetEntity.setAmount(originalAssetEntity.getAmount() + newAmount);
+    } else if (newType.equals(TransactionType.SPENDING)) {
+      originalAssetEntity.setAmount(originalAssetEntity.getAmount() - newAmount);
+    }
+
+    assetRepository.save(originalAssetEntity);
 
     AccountBookEntity updatedAccountBookEntity = accountBookRepository.save(accountBookEntity);
 
