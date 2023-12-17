@@ -35,8 +35,10 @@ public class AddressService {
   }
 
   public Map<String, String> getCoordinates(String address) {
-    JSONObject addressInfoJson = getAddressInfo(address);
     Map<String, String> coordinates = new HashMap<>();
+    if (address == null || address.isEmpty()) return coordinates;
+
+    JSONObject addressInfoJson = getAddressInfo(address);
 
     if (!addressInfoJson.getJSONArray("documents").isEmpty()) {
       JSONObject documentObject = addressInfoJson.getJSONArray("documents").getJSONObject(0);
