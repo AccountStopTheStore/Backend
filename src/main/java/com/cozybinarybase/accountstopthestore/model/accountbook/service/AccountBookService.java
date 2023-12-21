@@ -15,6 +15,8 @@ import com.cozybinarybase.accountstopthestore.model.accountbook.dto.constants.Tr
 import com.cozybinarybase.accountstopthestore.model.accountbook.exception.AccountBookNotValidException;
 import com.cozybinarybase.accountstopthestore.model.accountbook.persist.entity.AccountBookEntity;
 import com.cozybinarybase.accountstopthestore.model.accountbook.persist.repository.AccountBookRepository;
+import com.cozybinarybase.accountstopthestore.model.accountbook.persist.repository.AccountBookRepositoryCustom;
+import com.cozybinarybase.accountstopthestore.model.accountbook.persist.repository.AccountBookRepositoryImpl;
 import com.cozybinarybase.accountstopthestore.model.asset.exception.AssetNotValidException;
 import com.cozybinarybase.accountstopthestore.model.asset.persist.entity.AssetEntity;
 import com.cozybinarybase.accountstopthestore.model.asset.persist.repository.AssetRepository;
@@ -282,21 +284,25 @@ public class AccountBookService {
 
   @Transactional(readOnly = true)
   public List<AccountBookResponseDto> search(String keyword, LocalDate startDate, LocalDate endDate,
-      String categoryName,
-      Long minPrice, Long maxPrice, int page, int limit, Member member) {
+      String categoryName, Long minPrice, Long maxPrice, Integer page, Integer limit, Member member) {
 
-    if (startDate.isAfter(endDate) || endDate.isBefore(startDate)) {
+    if (startDate != null && endDate != null && (startDate.isAfter(endDate) || endDate.isBefore(startDate))) {
       throw new AccountBookNotValidException("날짜 설정을 다시 해주시길 바랍니다.");
     }
 
-    Pageable pageable = PageRequest.of(page, limit);
+    Pageable pageable = null;
 
-    List<AccountBookEntity> accountBookEntityList =
-        accountBookRepository.findByMemoContainingAndTransactedAtBetweenAndCategory_NameAndAmountBetweenAndMember_Id(
-            keyword, startDate.atStartOfDay(), endDate.atStartOfDay(), categoryName, minPrice,
-            maxPrice, member.getId(), pageable).getContent();
+    if (page != null && limit != null) {
+      pageable = PageRequest.of(page, limit);
+    }
+    else {
+      pageable = Pageable.unpaged();
+    }
 
-    return accountBookEntityList.stream()
+    Page<AccountBookEntity> accountBookEntityPage = accountBookRepository.searchByCriteria(
+        keyword, startDate, endDate, categoryName, minPrice, maxPrice, member.getId(), pageable);
+
+    return accountBookEntityPage.stream()
         .map(AccountBookResponseDto::fromEntity)
         .collect(Collectors.toList());
   }

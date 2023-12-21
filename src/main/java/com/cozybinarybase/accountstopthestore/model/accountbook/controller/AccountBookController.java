@@ -119,15 +119,16 @@ public class AccountBookController {
 
   @GetMapping("/search")
   public ResponseEntity<?> search(
-      @RequestParam String keyword,
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-      @RequestParam String categoryName,
-      @RequestParam Long minPrice,
-      @RequestParam Long maxPrice,
-      @RequestParam(defaultValue = "0", required = false) int page,
-      @RequestParam(defaultValue = "10", required = false) int limit,
+      @RequestParam(required = false) String keyword,
+      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+      @RequestParam(required = false) String categoryName,
+      @RequestParam(required = false) Long minPrice,
+      @RequestParam(required = false) Long maxPrice,
+      @RequestParam(required = false) Integer page,
+      @RequestParam(required = false) Integer limit,
       @AuthenticationPrincipal Member member) {
+
     List<AccountBookResponseDto> responseDtos = accountBookService.search(
         keyword, startDate, endDate, categoryName, minPrice, maxPrice, page, limit, member);
 
