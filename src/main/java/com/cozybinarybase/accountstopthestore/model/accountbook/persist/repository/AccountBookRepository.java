@@ -32,7 +32,7 @@ public interface AccountBookRepository extends JpaRepository<AccountBookEntity, 
   Page<AccountBookEntity> findByMemoContainingAndTransactedAtBetweenAndCategory_NameAndAmountBetweenAndMember_Id(
       String keyword, LocalDateTime startDate, LocalDateTime endDate, String categoryName,
       Long minPrice, Long maxPrice, Long memberId, Pageable pageable);
-      
+
   void deleteAllByMemberId(Long id);
 
   default List<StatisticsData> findTransactionStatistics(LocalDate startDate, LocalDate endDate,
