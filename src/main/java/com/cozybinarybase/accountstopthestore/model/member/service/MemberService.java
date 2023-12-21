@@ -286,7 +286,7 @@ public class MemberService implements UserDetailsService {
     Long memberId = memberEntity.getId();
 
     simpleEmailService.sendEmail(email, "가게그만가계 비밀번호 재설정 링크입니다.",
-        String.format("%s/auth/reset-password/%d/t/%s", "http://localhost:3000", memberId, token));
+        String.format("%s/auth/reset-password/%d/t/%s", "http://localhost:5173", memberId, token));
 
     PasswordReset passwordReset = new PasswordReset();
     passwordReset.setEmail(email);
