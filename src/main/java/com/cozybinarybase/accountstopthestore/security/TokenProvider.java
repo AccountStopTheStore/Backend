@@ -142,7 +142,7 @@ public class TokenProvider {
         .httpOnly(false)
         .path("/")
         .sameSite("None")
-        .secure(true)
+        .secure(false)
         .build();
 
     response.addHeader("Set-Cookie", userInfoCookie.toString());
