@@ -19,8 +19,8 @@ public class WebConfig implements WebMvcConfigurer {
     registry.addMapping("/**")
         .allowedOriginPatterns("*") // 모든 도메인 허용
         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-        .allowedHeaders("Authorization", "Content-Type")
-        .exposedHeaders("Custom-Header")
+        .allowedHeaders("Authorization", "Content-Type", "User-Info")
+        .exposedHeaders("Custom-Header", "User-Info")
         .allowCredentials(true)
         .maxAge(3600);
   }
