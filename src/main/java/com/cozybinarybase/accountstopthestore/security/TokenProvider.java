@@ -137,9 +137,19 @@ public class TokenProvider {
     userInfoJson.put("refreshTokenRemainingTime", getRefreshTokenRemainingTime(refreshToken));
 
     String userInfoString = Base64.getEncoder().encodeToString(userInfoJson.toString().getBytes());
+
+    ResponseCookie userInfoCookie = ResponseCookie.from("userInfo", userInfoString)
+        .httpOnly(false)
+        .path("/")
+        .sameSite("None")
+        .secure(true)
+        .domain("localhost")
+        .build();
+
+    response.addHeader("Set-Cookie", userInfoCookie.toString());
     response.addHeader("User-Info", userInfoString);
 
-    log.info("사용자 정보 쿠키 설정 완료");
+    log.info("사용자 정보 쿠키, 헤더 설정 완료");
   }
 
   public Optional<String> extractToken(HttpServletRequest request, String cookieName) {
